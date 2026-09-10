@@ -61,17 +61,12 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       {isOpen && (
         <div
           onClick={onClose}
-          style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'rgba(0, 0, 0, 0.75)',
-            backdropFilter: 'blur(4px)',
-            zIndex: 95,
-          }}
+          className="sidebar-overlay"
         />
       )}
 
       <aside className={`sidebar ${isOpen ? 'active' : ''}`}>
+        {/* Brand Header */}
         <div className="sidebar-brand">
           <Link href="/" className="brand-wrapper" onClick={onClose}>
             <img
@@ -79,7 +74,6 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
               alt="Arkatva Logo"
               className="brand-logo-img"
               onError={(e) => {
-                // Fallback if jpeg doesn't load
                 (e.target as HTMLImageElement).src = '/assets/logo.png';
               }}
             />
@@ -100,47 +94,43 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           )}
         </div>
 
-        <ul className="sidebar-nav">
-          <li className="nav-section-title">Navigation</li>
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive =
-              item.href === '/'
-                ? pathname === '/'
-                : pathname === item.href || pathname?.startsWith(item.href + '/');
+        {/* Scrollable Navigation Items */}
+        <div className="sidebar-nav-scroll">
+          <ul className="sidebar-nav">
+            <li className="nav-section-title">Navigation</li>
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const isActive =
+                item.href === '/'
+                  ? pathname === '/'
+                  : pathname === item.href || pathname?.startsWith(item.href + '/');
 
-            return (
-              <li key={item.href} className="nav-item">
-                <Link
-                  href={item.href}
-                  className={`nav-link ${isActive ? 'active' : ''}`}
-                  onClick={onClose}
-                >
-                  <Icon size={18} />
-                  <span>{item.label}</span>
-                </Link>
-              </li>
-            );
-          })}
+              return (
+                <li key={item.href} className="nav-item">
+                  <Link
+                    href={item.href}
+                    className={`nav-link ${isActive ? 'active' : ''}`}
+                    onClick={onClose}
+                  >
+                    <Icon size={18} />
+                    <span>{item.label}</span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
 
-          <li className="nav-item" style={{ marginTop: 'auto', paddingTop: '1.5rem' }}>
-            <button
-              onClick={handleLogout}
-              className="nav-link"
-              style={{
-                color: 'var(--danger)',
-                background: 'rgba(239, 68, 68, 0.08)',
-                border: '1px solid rgba(239, 68, 68, 0.2)',
-                width: '100%',
-                cursor: 'pointer',
-                textAlign: 'left',
-              }}
-            >
-              <LogOut size={18} />
-              <span>Sign Out</span>
-            </button>
-          </li>
-        </ul>
+        {/* Pinned Bottom Footer for Sign Out */}
+        <div className="sidebar-footer">
+          <button
+            onClick={handleLogout}
+            className="sidebar-logout-btn"
+          >
+            <LogOut size={18} />
+            <span>Sign Out</span>
+          </button>
+        </div>
       </aside>
     </>
   );
