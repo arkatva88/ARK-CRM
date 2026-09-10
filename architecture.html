@@ -1,0 +1,2910 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scalevyn CRM | Technical Proposal & Documentation</title>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Inter Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #059669;
+            --primary-light: #34d399;
+            --primary-dark: #064e3b;
+            --primary-glow: rgba(5, 150, 105, 0.15);
+            --bg-main: #f0fdf4; /* Mint green base */
+            --bg-card: rgba(255, 255, 255, 0.85);
+            --bg-sidebar: #064e3b;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --border-color: rgba(5, 150, 105, 0.15);
+            --shadow: 0 10px 25px -5px rgba(5, 150, 105, 0.08), 0 8px 10px -6px rgba(5, 150, 105, 0.08);
+            --card-shadow: 0 4px 20px -2px rgba(5, 150, 105, 0.03);
+            --active-gradient: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            --bg-code: #f1f5f9;
+            --text-code: #0f172a;
+            --accent: #2563eb;
+            --accent-light: #eff6ff;
+            --sidebar-width: 280px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="dark"] {
+            --primary: #10b981;
+            --primary-light: #34d399;
+            --primary-dark: #022c22;
+            --primary-glow: rgba(16, 185, 129, 0.25);
+            --bg-main: #0b0f19;
+            --bg-card: #151c2c;
+            --bg-sidebar: #090d16;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border-color: rgba(16, 185, 129, 0.15);
+            --shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.6), 0 8px 15px -6px rgba(0, 0, 0, 0.6);
+            --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
+            --active-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --bg-code: #1e293b;
+            --text-code: #cbd5e1;
+            --accent: #3b82f6;
+            --accent-light: #172554;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Double Grid Background Accent */
+        .bg-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(var(--primary-glow) 1.5px, transparent 1.5px),
+                radial-gradient(var(--primary-glow) 1.5px, transparent 1.5px);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.6;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--bg-sidebar);
+            color: white;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding: 2rem 0;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .sidebar-brand {
+            padding: 0 2rem;
+            margin-bottom: 2.5rem;
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .sidebar-brand span {
+            color: var(--primary-light);
+        }
+
+        .sidebar-brand i {
+            color: var(--primary-light);
+            filter: drop-shadow(0 0 8px var(--primary-light));
+        }
+
+        .sidebar-nav {
+            list-style: none;
+            padding: 0 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+            flex-grow: 1;
+        }
+
+        .nav-item-header {
+            padding: 0.75rem 1rem 0.25rem 1rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: #94a3b8;
+            text-decoration: none;
+            border-radius: 0.75rem;
+            font-weight: 500;
+            font-size: 0.925rem;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .nav-link:hover {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-link.active {
+            color: white;
+            background: var(--active-gradient);
+            box-shadow: 0 4px 15px -3px rgba(16, 185, 129, 0.4);
+        }
+
+        .nav-link i {
+            margin-right: 0.85rem;
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .nav-link.active i {
+            transform: scale(1.1);
+        }
+
+        .sidebar-footer {
+            padding: 0 1rem;
+            margin-top: auto;
+        }
+
+        .theme-toggle-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.03);
+            color: #cbd5e1;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: var(--transition);
+        }
+
+        .theme-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 2.5rem;
+            z-index: 1;
+            position: relative;
+            max-width: calc(100vw - var(--sidebar-width));
+            transition: var(--transition);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1.5rem;
+        }
+
+        .page-title {
+            font-size: 1.85rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            background: linear-gradient(120deg, var(--text-main) 30%, var(--primary) 90%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .badge-status {
+            padding: 0.35rem 0.75rem;
+            background-color: var(--primary-glow);
+            color: var(--primary);
+            border: 1px solid var(--border-color);
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        /* Content Section Switcher */
+        .doc-section {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out forwards;
+        }
+
+        .doc-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards and Elements */
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: 1.25rem;
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--active-gradient);
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card-header {
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-main);
+        }
+
+        .card-title i {
+            color: var(--primary);
+        }
+
+        .text-lead {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Custom Alert Callouts */
+        .alert-callout {
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin: 1.5rem 0;
+            display: flex;
+            gap: 1rem;
+            border-left: 4px solid;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .alert-important {
+            background-color: var(--primary-glow);
+            border-left-color: var(--primary);
+            color: var(--text-main);
+        }
+
+        .alert-important i {
+            color: var(--primary);
+            font-size: 1.2rem;
+            margin-top: 0.15rem;
+        }
+
+        .alert-warning {
+            background-color: rgba(245, 158, 11, 0.1);
+            border-left-color: #f59e0b;
+            color: var(--text-main);
+        }
+
+        .alert-warning i {
+            color: #f59e0b;
+            font-size: 1.2rem;
+            margin-top: 0.15rem;
+        }
+
+        /* System Architecture Layout & Interactive SVG */
+        .arch-grid {
+            display: grid;
+            grid-template-columns: 3fr 2fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 1200px) {
+            .arch-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .svg-container {
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: var(--card-shadow);
+        }
+
+        .arch-svg {
+            width: 100%;
+            height: auto;
+            max-height: 520px;
+        }
+
+        .svg-node {
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .svg-node rect, .svg-node ellipse {
+            fill: var(--bg-card);
+            stroke: var(--border-color);
+            stroke-width: 2;
+            transition: var(--transition);
+        }
+
+        .svg-node text {
+            fill: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            font-weight: 500;
+            transition: var(--transition);
+            pointer-events: none;
+        }
+
+        .svg-node-title {
+            font-size: 12px !important;
+            font-weight: 700 !important;
+        }
+
+        .svg-node:hover rect, .svg-node:hover ellipse, .svg-node.active rect, .svg-node.active ellipse {
+            fill: var(--primary-glow);
+            stroke: var(--primary);
+            filter: drop-shadow(0 0 6px var(--primary-light));
+        }
+
+        .svg-node:hover text, .svg-node.active text {
+            fill: var(--primary-dark);
+            font-weight: 600;
+        }
+
+        [data-theme="dark"] .svg-node:hover text, [data-theme="dark"] .svg-node.active text {
+            fill: var(--primary-light);
+        }
+
+        .svg-arrow {
+            stroke: var(--border-color);
+            stroke-width: 2;
+            fill: none;
+            stroke-dasharray: 4,4;
+            animation: dash 10s linear infinite;
+        }
+
+        .svg-arrow-solid {
+            stroke: var(--border-color);
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .svg-arrow-glow {
+            stroke: var(--primary);
+            stroke-width: 3;
+            opacity: 0;
+            fill: none;
+            transition: var(--transition);
+        }
+
+        .svg-arrow-glow.active {
+            opacity: 0.8;
+            stroke-dasharray: 8,4;
+            animation: dash 15s linear infinite;
+        }
+
+        @keyframes dash {
+            to {
+                stroke-dashoffset: -100;
+            }
+        }
+
+        .arch-panel {
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-left: 2px solid var(--border-color);
+        }
+
+        .arch-panel-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary);
+        }
+
+        .arch-panel-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .arch-panel-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .arch-panel-item strong {
+            font-size: 0.95rem;
+            color: var(--text-main);
+        }
+
+        .arch-panel-item span {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* Database Schema Explorer styles */
+        .schema-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-wrapper {
+            position: relative;
+            flex-grow: 1;
+            min-width: 240px;
+        }
+
+        .search-wrapper i {
+            position: absolute;
+            left: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.85rem 1rem 0.85rem 2.75rem;
+            border-radius: 0.75rem;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            color: var(--text-main);
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+        }
+
+        .filter-btn-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .filter-btn {
+            padding: 0.85rem 1.25rem;
+            border-radius: 0.75rem;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .filter-btn:hover {
+            border-color: var(--primary);
+            color: var(--text-main);
+        }
+
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .schema-board {
+            position: relative;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+            z-index: 2;
+        }
+
+        .schema-table-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .schema-table-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 20px -5px var(--primary-glow);
+        }
+
+        .schema-table-card.dimmed {
+            opacity: 0.35;
+            filter: grayscale(0.5);
+            transform: scale(0.98);
+        }
+
+        .schema-table-card.highlighted {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px 2px var(--primary-glow);
+            transform: scale(1.02);
+            z-index: 5;
+        }
+
+        .schema-table-header {
+            background: linear-gradient(to right, var(--primary-glow), transparent);
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .schema-table-name {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-main);
+            font-family: 'Fira Code', monospace;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .schema-table-rows-count {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            background: rgba(255,255,255,0.15);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+        }
+
+        .schema-table-fields {
+            padding: 0.5rem 0;
+            list-style: none;
+            max-height: 320px;
+            overflow-y: auto;
+        }
+
+        .schema-field-item {
+            padding: 0.45rem 1.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(5, 150, 105, 0.05);
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+            transition: var(--transition);
+        }
+
+        .schema-field-item:last-child {
+            border-bottom: none;
+        }
+
+        .schema-field-name {
+            font-weight: 600;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .schema-field-name i.key-pk {
+            color: #f59e0b;
+            font-size: 0.75rem;
+        }
+
+        .schema-field-name i.key-fk {
+            color: var(--accent);
+            font-size: 0.75rem;
+        }
+
+        .schema-field-type {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+
+        .schema-field-item:hover {
+            background-color: var(--primary-glow);
+        }
+
+        /* SVG Line drawing layer */
+        .canvas-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .relation-line {
+            fill: none;
+            stroke-width: 2.5;
+            transition: stroke-dashoffset 2s ease, opacity 0.3s ease;
+            opacity: 0;
+        }
+
+        .relation-line.active {
+            opacity: 0.75;
+            stroke-dasharray: 5,5;
+            animation: dash 20s linear infinite;
+        }
+
+        /* Features Matrix Styles */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 1.25rem;
+            padding: 1.75rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 12px 25px -5px var(--primary-glow);
+        }
+
+        .feature-icon-wrapper {
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 1rem;
+            background: var(--primary-glow);
+            color: var(--primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            box-shadow: var(--card-shadow);
+        }
+
+        .feature-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .feature-desc {
+            font-size: 0.925rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            flex-grow: 1;
+        }
+
+        .feature-bullets {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .feature-bullets li {
+            font-size: 0.85rem;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .feature-bullets li i {
+            color: var(--primary);
+            font-size: 0.85rem;
+        }
+
+        /* User Guide / Manual Styles */
+        .guide-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .guide-step-accordion {
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            background: var(--bg-card);
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .guide-step-header {
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            font-weight: 600;
+            color: var(--text-main);
+            transition: var(--transition);
+        }
+
+        .guide-step-header:hover {
+            background-color: var(--primary-glow);
+        }
+
+        .guide-step-title {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            font-size: 1.05rem;
+        }
+
+        .guide-step-number {
+            width: 1.75rem;
+            height: 1.75rem;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .guide-step-chevron {
+            transition: transform 0.3s ease;
+            color: var(--text-muted);
+        }
+
+        .guide-step-content {
+            padding: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.4s ease;
+            border-top: 1px solid transparent;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--text-muted);
+        }
+
+        .guide-step-accordion.active .guide-step-chevron {
+            transform: rotate(180deg);
+        }
+
+        .guide-step-accordion.active .guide-step-content {
+            padding: 1.5rem;
+            max-height: 1000px;
+            border-top-color: var(--border-color);
+        }
+
+        .code-block-wrapper {
+            position: relative;
+            margin: 1rem 0;
+        }
+
+        .code-block-header {
+            background: #1e293b;
+            color: #94a3b8;
+            padding: 0.5rem 1rem;
+            border-top-left-radius: 0.5rem;
+            border-top-right-radius: 0.5rem;
+            font-size: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: monospace;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .code-block {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 1.25rem;
+            border-bottom-left-radius: 0.5rem;
+            border-bottom-right-radius: 0.5rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.5;
+        }
+
+        .copy-btn {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .copy-btn:hover {
+            color: white;
+        }
+
+        .step-visual-mock {
+            background: rgba(255,255,255,0.03);
+            border: 1px dashed var(--border-color);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        /* Responsive Mobile Toggle Styles */
+        .mobile-toggle {
+            display: none;
+            background: var(--bg-sidebar);
+            color: white;
+            border: none;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-size: 1.15rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+            transition: var(--transition);
+        }
+
+        @media (max-width: 992px) {
+            .mobile-toggle {
+                display: block;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                max-width: 100vw;
+                padding: 1.5rem;
+                padding-top: 4.5rem;
+            }
+        }
+
+        /* Mock CRM App Simulator Styles */
+        .mock-crm-wrapper {
+            display: flex;
+            width: 100%;
+            height: 580px;
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            margin-top: 2.5rem;
+            font-size: 0.85rem;
+        }
+
+        .mock-crm-sidebar {
+            width: 200px;
+            background: var(--bg-sidebar);
+            color: white;
+            padding: 1.5rem 0.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            flex-shrink: 0;
+            border-right: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .mock-crm-brand {
+            font-size: 1.1rem;
+            font-weight: 800;
+            padding: 0 0.5rem;
+            color: white;
+        }
+        
+        .mock-crm-brand span {
+            color: var(--primary-light);
+        }
+
+        .mock-crm-nav {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .mock-crm-nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.6rem 0.75rem;
+            color: #94a3b8;
+            text-decoration: none;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .mock-crm-nav-link:hover, .mock-crm-nav-link.active {
+            color: white;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .mock-crm-nav-link.active {
+            background: var(--active-gradient) !important;
+            color: white;
+        }
+
+        .mock-crm-nav-link i {
+            margin-right: 0.5rem;
+            width: 16px;
+            text-align: center;
+        }
+
+        .mock-crm-main {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-card);
+            overflow: hidden;
+            color: var(--text-main);
+        }
+
+        .mock-crm-header {
+            height: 50px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1.5rem;
+            flex-shrink: 0;
+            background: var(--bg-card);
+        }
+
+        .mock-crm-body {
+            flex-grow: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            position: relative;
+            background: var(--bg-main);
+        }
+
+        .mock-crm-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .mock-crm-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            box-shadow: var(--card-shadow);
+        }
+
+        .mock-crm-card-title {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+            font-weight: 500;
+        }
+
+        .mock-crm-card-val {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .mock-crm-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+        }
+
+        .mock-crm-panel-header {
+            padding: 0.75rem 1rem;
+            background: linear-gradient(to right, var(--primary-glow), transparent);
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mock-crm-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+
+        .mock-crm-table th {
+            text-align: left;
+            padding: 0.6rem 0.85rem;
+            background: var(--bg-main);
+            color: var(--text-muted);
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .mock-crm-table td {
+            padding: 0.6rem 0.85rem;
+            border-bottom: 1px solid rgba(5, 150, 105, 0.05);
+        }
+
+        .mock-crm-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .mock-badge {
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .mock-badge-paid { background-color: #dcfce7; color: #166534; }
+        .mock-badge-pending { background-color: #fef9c3; color: #854d0e; }
+        .mock-badge-overdue { background-color: #fee2e2; color: #991b1b; }
+
+        .mock-btn {
+            padding: 0.35rem 0.75rem;
+            border-radius: 0.375rem;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.75rem;
+            transition: var(--transition);
+        }
+
+        .mock-btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .mock-btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Thread styles for Ticket Mockup */
+        .mock-chat-thread {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            padding: 1rem;
+            height: 180px;
+            overflow-y: auto;
+            background: var(--bg-main);
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .mock-chat-msg {
+            max-width: 80%;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            line-height: 1.4;
+        }
+
+        .mock-chat-msg.staff {
+            background: var(--primary-glow);
+            color: var(--text-main);
+            align-self: flex-start;
+            border-left: 3px solid var(--primary);
+        }
+
+        .mock-chat-msg.client {
+            background: #e2e8f0;
+            color: #1e293b;
+            align-self: flex-end;
+        }
+        
+        [data-theme="dark"] .mock-chat-msg.client {
+            background: #1e293b;
+            color: #f1f5f9;
+        }
+
+        .mock-chat-meta {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            margin-bottom: 0.15rem;
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+
+<!-- Mobile Toggle Menu Button -->
+<button class="mobile-toggle" onclick="toggleMobileSidebar()"><i class="fas fa-bars"></i></button>
+
+<!-- Navigation Sidebar -->
+<aside class="sidebar">
+    <div class="sidebar-brand">
+        <i class="fas fa-cubes"></i> Scalevyn<span>.docs</span>
+    </div>
+    <ul class="sidebar-nav">
+        <li class="nav-item-header">Document sections</li>
+        <li class="nav-item">
+            <a onclick="switchSection('overview', this)" class="nav-link active">
+                <i class="fas fa-info-circle"></i> Proposal & Overview
+            </a>
+        </li>
+        <li class="nav-item">
+            <a onclick="switchSection('architecture', this)" class="nav-link">
+                <i class="fas fa-sitemap"></i> System Architecture
+            </a>
+        </li>
+        <li class="nav-item">
+            <a onclick="switchSection('schema', this)" class="nav-link">
+                <i class="fas fa-database"></i> Database Schema
+            </a>
+        </li>
+        <li class="nav-item">
+            <a onclick="switchSection('features', this)" class="nav-link">
+                <i class="fas fa-star"></i> Core Features
+            </a>
+        </li>
+        <li class="nav-item">
+            <a onclick="switchSection('guide', this)" class="nav-link">
+                <i class="fas fa-book-open"></i> User Guide
+            </a>
+        </li>
+    </ul>
+    <div class="sidebar-footer">
+        <button class="theme-toggle-btn" onclick="toggleTheme()">
+            <i class="fas fa-moon" id="theme-icon"></i> <span id="theme-text">Dark Mode</span>
+        </button>
+    </div>
+</aside>
+
+<!-- Main content panel -->
+<main class="main-content">
+    <header class="header">
+        <div>
+            <h1 class="page-title" id="section-title">Proposal & Overview</h1>
+            <p style="color: var(--text-muted); font-size: 0.875rem; margin-top: 0.25rem;">Scalevyn CRM Technical Specifications</p>
+        </div>
+        <div class="header-meta">
+            <span class="badge-status">v1.2.0-stable</span>
+            <span style="color: var(--text-muted); font-size: 0.85rem;"><i class="far fa-calendar-alt"></i> July 2026</span>
+        </div>
+    </header>
+
+    <!-- SECTION: OVERVIEW / PROPOSAL -->
+    <section id="sect-overview" class="doc-section active">
+        <div class="card">
+            <div class="card-title"><i class="fas fa-file-signature"></i> Executive Proposal</div>
+            <p class="text-lead" style="margin-top: 1rem;">
+                Scalevyn CRM is a lightweight, custom-engineered client relationship and billing platform built for small-to-medium digital agencies. Designed from the ground up for streamlined invoice generation, quotation management, customer ticketing, and automated subscription tracking, it simplifies the daily financials of client operations.
+            </p>
+            <p class="text-lead">
+                Unlike bloated enterprise tools, Scalevyn is highly customized to support multiple business partners (Sajjad, Shrinidhi, Anish) sharing equal profits while utilizing their personal accounts for transactions. It tracks revenue in real-time and computes partner share balances dynamically based on the formula: <code>(Total Revenue - Total Expenses) / 3</code>.
+            </p>
+            <div class="alert-callout alert-important">
+                <i class="fas fa-lightbulb"></i>
+                <div>
+                    <strong>Core Advantage:</strong> Absolute transparency in partnership finances. The platform keeps track of business revenue residing inside individual personal bank accounts, calculating who owes what to whom at any given point in time.
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title"><i class="fas fa-project-diagram"></i> Key Deliverables & Goals</div>
+            <p class="text-lead" style="margin-top: 1.05rem;">
+                This technical document outlines the entire software design of the Scalevyn CRM platform to provide stakeholders with an in-depth view of system capabilities.
+            </p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
+                <div style="padding: 1.25rem; border: 1px solid var(--border-color); border-radius: 0.75rem; background: rgba(5,150,105,0.02)">
+                    <h4 style="font-weight: 700; margin-bottom: 0.5rem; color: var(--primary);"><i class="fas fa-server"></i> Modular Codebase</h4>
+                    <p style="font-size: 0.85rem; line-height: 1.5; color: var(--text-muted)">Clean separation of features (Billing, Tickets, Renewals, Receipts) under self-contained directories.</p>
+                </div>
+                <div style="padding: 1.25rem; border: 1px solid var(--border-color); border-radius: 0.75rem; background: rgba(5,150,105,0.02)">
+                    <h4 style="font-weight: 700; margin-bottom: 0.5rem; color: var(--primary);"><i class="fas fa-coins"></i> Financial Ledger</h4>
+                    <p style="font-size: 0.85rem; line-height: 1.5; color: var(--text-muted)">Accurate tracking of debit/credit accounts, withdrawals, and categorized business expenses.</p>
+                </div>
+                <div style="padding: 1.25rem; border: 1px solid var(--border-color); border-radius: 0.75rem; background: rgba(5,150,105,0.02)">
+                    <h4 style="font-weight: 700; margin-bottom: 0.5rem; color: var(--primary);"><i class="fas fa-bell"></i> Subscription Alerts</h4>
+                    <p style="font-size: 0.85rem; line-height: 1.5; color: var(--text-muted)">Proactive notification indicators and WhatsApp integration for expiring domains, hosting, or support contracts.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION: SYSTEM ARCHITECTURE -->
+    <section id="sect-architecture" class="doc-section">
+        <div class="card">
+            <div class="card-title"><i class="fas fa-sitemap"></i> High-Level Architecture</div>
+            <p class="text-lead" style="margin-top: 1rem;">
+                Scalevyn CRM runs on a <strong>modular 3-tier architecture</strong> built with vanilla PHP. It uses a custom routing-prefix engine to automatically resolve directory path levels relative to the project root, allowing scripts in subfolders to seamlessly share global resources.
+            </p>
+
+            <div class="arch-grid">
+                <!-- Interactive SVG Arch Diagram -->
+                <div class="svg-container">
+                    <svg viewBox="0 0 600 500" class="arch-svg">
+                        <!-- Definitions for arrow markers -->
+                        <defs>
+                            <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--border-color)"/>
+                            </marker>
+                            <marker id="arrow-active" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--primary)"/>
+                            </marker>
+                        </defs>
+
+                        <!-- Box 1: Client/Presentation Layer -->
+                        <g class="svg-node" id="node-presentation" onclick="showArchInfo('presentation')">
+                            <rect x="20" y="30" width="180" height="100" rx="10" />
+                            <text x="110" y="55" text-anchor="middle" class="svg-node-title">PRESENTATION TIER</text>
+                            <text x="110" y="75" text-anchor="middle">HTML5 / CSS Variables</text>
+                            <text x="110" y="90" text-anchor="middle">JavaScript & FontAwesome</text>
+                            <text x="110" y="105" text-anchor="middle">assets/css/style.css</text>
+                        </g>
+
+                        <!-- Box 2: Routing & Shared Libs -->
+                        <g class="svg-node" id="node-includes" onclick="showArchInfo('includes')">
+                            <rect x="20" y="200" width="180" height="100" rx="10" />
+                            <text x="110" y="225" text-anchor="middle" class="svg-node-title">SHARED INCLUDES</text>
+                            <text x="110" y="245" text-anchor="middle">header.php (Auth/Menu)</text>
+                            <text x="110" y="260" text-anchor="middle">footer.php (Layouts)</text>
+                            <text x="110" y="275" text-anchor="middle">functions.php (Helpers)</text>
+                        </g>
+
+                        <!-- Box 3: Modular Application Logic (Controller) -->
+                        <g class="svg-node" id="node-logic" onclick="showArchInfo('logic')">
+                            <rect x="340" y="115" width="240" height="140" rx="10" />
+                            <text x="460" y="140" text-anchor="middle" class="svg-node-title">APPLICATION LOGIC (PHP)</text>
+                            <text x="460" y="160" text-anchor="middle">modules/billing/ (Invoices)</text>
+                            <text x="460" y="175" text-anchor="middle">modules/quotations/ (Quotes)</text>
+                            <text x="460" y="190" text-anchor="middle">modules/receipts/ (Payments)</text>
+                            <text x="460" y="205" text-anchor="middle">modules/tickets/ (Support)</text>
+                            <text x="460" y="220" text-anchor="middle">modules/renewals/ (Services)</text>
+                            <text x="460" y="235" text-anchor="middle">modules/expenses/ & withdrawals/</text>
+                        </g>
+
+                        <!-- Box 4: Database Connection Layer -->
+                        <g class="svg-node" id="node-config" onclick="showArchInfo('config')">
+                            <rect x="210" y="320" width="180" height="60" rx="10" />
+                            <text x="300" y="345" text-anchor="middle" class="svg-node-title">DATABASE CONNECTOR</text>
+                            <text x="300" y="360" text-anchor="middle">config/db.php (PDO Instance)</text>
+                        </g>
+
+                        <!-- Box 5: MySQL Database Layer -->
+                        <g class="svg-node" id="node-database" onclick="showArchInfo('database')">
+                            <ellipse cx="300" cy="450" rx="90" ry="30" />
+                            <text x="300" y="454" text-anchor="middle" class="svg-node-title">MySQL DATABASE</text>
+                        </g>
+
+                        <!-- External Box: WhatsApp Integration -->
+                        <g class="svg-node" id="node-external" onclick="showArchInfo('external')">
+                            <rect x="420" y="30" width="150" height="50" rx="6" style="stroke: #25d366" />
+                            <text x="495" y="55" text-anchor="middle" style="fill: #25d366; font-weight: 700;">WhatsApp Web</text>
+                            <text x="495" y="68" text-anchor="middle" style="font-size: 9px">Click-to-Chat API</text>
+                        </g>
+
+                        <!-- Connecting arrows -->
+                        <!-- Presentation -> Includes -->
+                        <path d="M 110 130 L 110 200" class="svg-arrow-solid" marker-end="url(#arrow)" />
+                        <!-- Includes -> Config -->
+                        <path d="M 110 300 L 110 350 L 210 350" class="svg-arrow-solid" marker-end="url(#arrow)" />
+                        <!-- Logic -> Config -->
+                        <path d="M 460 255 L 460 350 L 390 350" class="svg-arrow-solid" marker-end="url(#arrow)" />
+                        <!-- Config -> Database -->
+                        <path d="M 300 380 L 300 420" class="svg-arrow-solid" marker-end="url(#arrow)" />
+                        <!-- Presentation -> Logic -->
+                        <path d="M 200 80 L 340 150" class="svg-arrow" marker-end="url(#arrow)" />
+                        <!-- Logic -> External -->
+                        <path d="M 495 115 L 495 80" class="svg-arrow" marker-end="url(#arrow)" />
+
+                        <!-- Active Glowing Arrows -->
+                        <path id="glow-p-l" d="M 200 80 L 340 150" class="svg-arrow-glow" marker-end="url(#arrow-active)" />
+                        <path id="glow-l-c" d="M 460 255 L 460 350 L 390 350" class="svg-arrow-glow" marker-end="url(#arrow-active)" />
+                        <path id="glow-c-d" d="M 300 380 L 300 420" class="svg-arrow-glow" marker-end="url(#arrow-active)" />
+                    </svg>
+                </div>
+
+                <!-- Descriptive Information Panel -->
+                <div class="arch-panel">
+                    <h3 class="arch-panel-title" id="arch-info-title"><i class="fas fa-mouse-pointer"></i> Select System Component</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1.5rem;" id="arch-info-desc">
+                        Click on any node in the architectural diagram to the left to inspect its implementation files, role, and details.
+                    </p>
+                    <div id="arch-info-details" style="display: none;">
+                        <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-main);">Involved Files:</h4>
+                        <ul class="arch-panel-list" id="arch-info-files">
+                            <!-- Populated dynamically -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title"><i class="fas fa-route"></i> Relative Directory Prefixes (Dynamic Path Resolver)</div>
+            <p class="text-lead" style="margin-top: 1rem;">
+                Since Scalevyn CRM is structured hierarchically in directories, PHP scripts in subfolders (e.g. <code>modules/billing/create_invoice.php</code>) run at different nesting levels. The system utilizes a specialized header resolver to calculate path levels dynamically relative to the script filename.
+            </p>
+            <div class="code-block-wrapper">
+                <div class="code-block-header">
+                    <span>includes/header.php</span>
+                    <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                </div>
+                <div class="code-block" style="max-height: 250px;">$project_root = str_replace('\\', '/', dirname(__DIR__));
+$current_dir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_FILENAME']));
+$relative_path = str_replace($project_root, '', $current_dir);
+$levels = substr_count(trim($relative_path, '/'), '/');
+if (trim($relative_path, '/') !== '') {
+    $levels += 1;
+}
+$prefix = str_repeat('../', $levels);
+
+// Assets are then linked dynamic:
+echo "&lt;link rel='stylesheet' href='{$prefix}assets/css/style.css'&gt;";</div>
+            </div>
+            <p class="text-lead">
+                This prevents hardcoded absolute URLs and enables seamless deployment across different local servers or production subdirectories without configuration modifications.
+            </p>
+        </div>
+    </section>
+
+    <!-- SECTION: DATABASE SCHEMA -->
+    <section id="sect-schema" class="doc-section">
+        <div class="card">
+            <div class="card-title"><i class="fas fa-project-diagram"></i> Database Relationship & Schema Explorer</div>
+            <p class="text-lead" style="margin-top: 0.5rem;">
+                Select a table card below to view its fields, keys, data constraints, and visually map foreign key relationships in real-time. Double-click or click "Clear Highlights" to reset.
+            </p>
+            
+            <div class="schema-controls">
+                <div class="search-wrapper">
+                    <i class="fas fa-search"></i>
+                    <input type="text" class="search-input" id="schema-search" placeholder="Search tables, columns, or types (e.g. enum)..." oninput="filterSchema()">
+                </div>
+                <div class="filter-btn-group">
+                    <button class="filter-btn active" onclick="filterSchemaCategory('all', this)">All Tables</button>
+                    <button class="filter-btn" onclick="filterSchemaCategory('financial', this)">Financials</button>
+                    <button class="filter-btn" onclick="filterSchemaCategory('client', this)">Clients & Services</button>
+                    <button class="filter-btn" onclick="filterSchemaCategory('core', this)">Core System</button>
+                </div>
+                <button class="filter-btn" onclick="clearSchemaHighlight()" style="border-color: var(--danger); color: var(--danger);"><i class="fas fa-sync"></i> Reset Highlight</button>
+            </div>
+
+            <!-- SVG layer for lines -->
+            <div style="position: relative;">
+                <svg id="schema-svg" class="canvas-overlay"></svg>
+                <div class="schema-board" id="schema-board">
+                    <!-- Cards will be populated and rendered via JS -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION: CORE FEATURES -->
+    <section id="sect-features" class="doc-section">
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon-wrapper"><i class="fas fa-chart-line"></i></div>
+                <h3 class="feature-title">Smart Dashboard Ledger</h3>
+                <p class="feature-desc">
+                    Aggregated visual overview of Total Revenue, Available Balances, and Pending Invoices. Features real-time partner bank balances.
+                </p>
+                <ul class="feature-bullets">
+                    <li><i class="fas fa-check-circle"></i> Computes profit share splits dynamically</li>
+                    <li><i class="fas fa-check-circle"></i> Flags business funds inside personal accounts</li>
+                    <li><i class="fas fa-check-circle"></i> Highlights pending renewals/open support tickets</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon-wrapper"><i class="fas fa-file-invoice-dollar"></i></div>
+                <h3 class="feature-title">Billing & Quotations</h3>
+                <p class="feature-desc">
+                    Custom invoice and quotation generators. Easily convert quotations to invoices with a single click, and print/download clean layouts.
+                </p>
+                <ul class="feature-bullets">
+                    <li><i class="fas fa-check-circle"></i> Track advance and pending due amounts</li>
+                    <li><i class="fas fa-check-circle"></i> Itemized quotation and invoice listing</li>
+                    <li><i class="fas fa-check-circle"></i> Standard print-to-PDF styles built-in</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon-wrapper"><i class="fas fa-sync-alt"></i></div>
+                <h3 class="feature-title">Service Renewals</h3>
+                <p class="feature-desc">
+                    Subscription management for hosting, domains, maintenance contracts, or services. Triggers expiration alerts automatically.
+                </p>
+                <ul class="feature-bullets">
+                    <li><i class="fas fa-check-circle"></i> High/Medium/Low expiry status colors</li>
+                    <li><i class="fas fa-check-circle"></i> Click-to-chat WhatsApp reminder templates</li>
+                    <li><i class="fas fa-check-circle"></i> Auto-calculated next renewal dates</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon-wrapper"><i class="fas fa-ticket-alt"></i></div>
+                <h3 class="feature-title">Support Ticket Threading</h3>
+                <p class="feature-desc">
+                    Internal helpdesk system connecting clients to support staff. Manage priority labels and response messages.
+                </p>
+                <ul class="feature-bullets">
+                    <li><i class="fas fa-check-circle"></i> Priority tags: low, medium, high, urgent</li>
+                    <li><i class="fas fa-check-circle"></i> Chronological message thread logging</li>
+                    <li><i class="fas fa-check-circle"></i> Quick status dropdown changes</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon-wrapper"><i class="fas fa-wallet"></i></div>
+                <h3 class="feature-title">Expenses & Withdrawals</h3>
+                <p class="feature-desc">
+                    Record out-of-pocket expenses paid by specific partners and match them against withdrawals for ledger auditing.
+                </p>
+                <ul class="feature-bullets">
+                    <li><i class="fas fa-check-circle"></i> Log categories and upload receipts</li>
+                    <li><i class="fas fa-check-circle"></i> Record shared or personal withdrawals</li>
+                    <li><i class="fas fa-check-circle"></i> Deducts from partner share balances</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon-wrapper"><i class="fas fa-users"></i></div>
+                <h3 class="feature-title">Client & Product Registry</h3>
+                <p class="feature-desc">
+                    Central database for customer accounts and product pricing catalog. Streamlines quotation and billing item creation.
+                </p>
+                <ul class="feature-bullets">
+                    <li><i class="fas fa-check-circle"></i> Double-email and primary phone logs</li>
+                    <li><i class="fas fa-check-circle"></i> Saved pricing plans for quick inserts</li>
+                    <li><i class="fas fa-check-circle"></i> Relational logs linking all client histories</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top: 3rem;">
+            <div class="card-title"><i class="fas fa-desktop"></i> Scalevyn CRM Interactive Application Showcase</div>
+            <p class="text-lead" style="margin-top: 0.5rem;">
+                Click through the menus in the mock application console below to test how the real Scalevyn CRM handles dashboards, client invoices, domain renewals, support tickets, and expenses.
+            </p>
+
+            <div class="mock-crm-wrapper">
+                <!-- Mock Sidebar -->
+                <aside class="mock-crm-sidebar">
+                    <div class="mock-crm-brand">Scalevyn<span>.crm</span></div>
+                    <ul class="mock-crm-nav">
+                        <li><a class="mock-crm-nav-link active" onclick="switchMockPage('dashboard', this)"><i class="fas fa-home"></i> Dashboard</a></li>
+                        <li><a class="mock-crm-nav-link" onclick="switchMockPage('invoices', this)"><i class="fas fa-file-invoice-dollar"></i> Invoices</a></li>
+                        <li><a class="mock-crm-nav-link" onclick="switchMockPage('quotations', this)"><i class="fas fa-file-alt"></i> Quotations</a></li>
+                        <li><a class="mock-crm-nav-link" onclick="switchMockPage('renewals', this)"><i class="fas fa-sync-alt"></i> Renewals</a></li>
+                        <li><a class="mock-crm-nav-link" onclick="switchMockPage('tickets', this)"><i class="fas fa-ticket-alt"></i> Tickets</a></li>
+                    </ul>
+                </aside>
+
+                <!-- Mock Content Area -->
+                <div class="mock-crm-main">
+                    <header class="mock-crm-header">
+                        <div style="font-weight: 700; font-size: 0.95rem;" id="mock-crm-header-title">Dashboard Overview</div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <span style="font-weight: 600;">Sajjad (Partner)</span>
+                            <i class="fas fa-user-circle" style="font-size: 1.1rem; color: var(--primary);"></i>
+                        </div>
+                    </header>
+                    <div class="mock-crm-body" id="mock-crm-body-content">
+                        <!-- Dashboard Mock Content (Default) -->
+                        <div class="mock-crm-grid">
+                            <div class="mock-crm-card">
+                                <div class="mock-crm-card-title">Total Revenue</div>
+                                <div class="mock-crm-card-val" style="color: var(--primary);">₹2,45,000.00</div>
+                            </div>
+                            <div class="mock-crm-card">
+                                <div class="mock-crm-card-title">Available Balance</div>
+                                <div class="mock-crm-card-val" style="color: var(--primary-dark);">₹1,82,500.00</div>
+                            </div>
+                            <div class="mock-crm-card">
+                                <div class="mock-crm-card-title">Total Pending</div>
+                                <div class="mock-crm-card-val" style="color: var(--danger);">₹62,500.00</div>
+                            </div>
+                            <div class="mock-crm-card">
+                                <div class="mock-crm-card-title">Open Tickets</div>
+                                <div class="mock-crm-card-val">2</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mock-crm-panel">
+                            <div class="mock-crm-panel-header">Partner Bank Balances</div>
+                            <div style="overflow-x: auto;">
+                                <table class="mock-crm-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Partner</th>
+                                            <th>Credited Receipts</th>
+                                            <th>Withdrawals</th>
+                                            <th>Expenses</th>
+                                            <th>Current Balance</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Sajjad</strong></td>
+                                            <td style="color: var(--primary);">₹1,15,000.00</td>
+                                            <td style="color: var(--danger);">₹20,000.00</td>
+                                            <td style="color: var(--danger);">₹15,000.00</td>
+                                            <td style="font-weight:700;">₹80,000.00</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Shrinidhi</strong></td>
+                                            <td style="color: var(--primary);">₹95,000.00</td>
+                                            <td style="color: var(--danger);">₹15,000.00</td>
+                                            <td style="color: var(--danger);">₹22,500.00</td>
+                                            <td style="font-weight:700;">₹57,500.00</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Anish</strong></td>
+                                            <td style="color: var(--primary);">₹35,000.00</td>
+                                            <td style="color: var(--danger);">₹10,000.00</td>
+                                            <td style="color: var(--danger);">₹5,000.00</td>
+                                            <td style="font-weight:700;">₹20,000.00</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="mock-crm-panel">
+                            <div class="mock-crm-panel-header">Partner Shared Ledger Splits</div>
+                            <div style="overflow-x: auto;">
+                                <table class="mock-crm-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Partner</th>
+                                            <th>Gross Profit Share</th>
+                                            <th>Total Personal Draw</th>
+                                            <th>Reconciliation Balance</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Sajjad</strong></td>
+                                            <td style="color: var(--primary);">₹67,500.00</td>
+                                            <td style="color: var(--danger);">₹35,000.00</td>
+                                            <td style="font-weight:700; color: var(--primary);">+₹32,500.00</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Shrinidhi</strong></td>
+                                            <td style="color: var(--primary);">₹67,500.00</td>
+                                            <td style="color: var(--danger);">₹37,500.00</td>
+                                            <td style="font-weight:700; color: var(--primary);">+₹30,000.00</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Anish</strong></td>
+                                            <td style="color: var(--primary);">₹67,500.00</td>
+                                            <td style="color: var(--danger);">₹15,000.00</td>
+                                            <td style="font-weight:700; color: var(--primary);">+₹52,500.00</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION: USER GUIDE -->
+    <section id="sect-guide" class="doc-section">
+        <div class="card">
+            <div class="card-title"><i class="fas fa-graduation-cap"></i> Interactive Operator Manual</div>
+            <p class="text-lead" style="margin-top: 1rem;">
+                Step-by-step procedures for the most common administrative tasks in the Scalevyn CRM platform. Click on a workflow header to expand details.
+            </p>
+
+            <div class="guide-steps">
+                <!-- Step 1 -->
+                <div class="guide-step-accordion">
+                    <div class="guide-step-header" onclick="toggleAccordion(this)">
+                        <div class="guide-step-title">
+                            <span class="guide-step-number">1</span>
+                            <span>Setting up a Client Registry</span>
+                        </div>
+                        <i class="fas fa-chevron-down guide-step-chevron"></i>
+                    </div>
+                    <div class="guide-step-content">
+                        <p>Before issuing invoices or managing tickets, a client must exist in the database registry.</p>
+                        <ol style="margin-left: 1.5rem; margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.35rem;">
+                            <li>Navigate to <strong>Clients</strong> in the sidebar.</li>
+                            <li>Click the <strong>Add New Client</strong> button in the upper right.</li>
+                            <li>Fill in the Client Name, Email addresses (two input slots are provided for primary and secondary communications), Phone, and Billing Address.</li>
+                            <li>Submit the form. The client is assigned a unique relational <code>id</code>.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="guide-step-accordion">
+                    <div class="guide-step-header" onclick="toggleAccordion(this)">
+                        <div class="guide-step-title">
+                            <span class="guide-step-number">2</span>
+                            <span>The Sales Flow: Quotation to Invoice conversion</span>
+                        </div>
+                        <i class="fas fa-chevron-down guide-step-chevron"></i>
+                    </div>
+                    <div class="guide-step-content">
+                        <p>Scalevyn streamlines the sales pipeline by converting accepted estimates directly to dynamic invoices.</p>
+                        <ol style="margin-left: 1.5rem; margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem; list-style-type: decimal;">
+                            <li><strong>Create Quotation:</strong> Navigate to <em>Quotations</em> -> <em>Create New Quotation</em>. Choose the client, input line items (quantity, unit price, description), and click save.</li>
+                            <li><strong>Send & Accept:</strong> Print the quotation as a PDF, send it to the client. Once approved, update the status to <strong>Accepted</strong>.</li>
+                            <li><strong>Convert to Invoice:</strong> Go to <em>Invoices</em> -> <em>Create New Invoice</em>. Select the client. An dynamic dropdown option <em>"Convert from Accepted Quotation"</em> will appear. Selecting the quotation auto-fills the entire line-items grid, client details, and total amounts.</li>
+                            <li>Set the Invoice Date, due date, and save.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="guide-step-accordion">
+                    <div class="guide-step-header" onclick="toggleAccordion(this)">
+                        <div class="guide-step-title">
+                            <span class="guide-step-number">3</span>
+                            <span>Recording Receipts & Partner Balances</span>
+                        </div>
+                        <i class="fas fa-chevron-down guide-step-chevron"></i>
+                    </div>
+                    <div class="guide-step-content">
+                        <p>Payments received from clients must be logged into receipts to distribute shares and offset due invoices.</p>
+                        <ol style="margin-left: 1.5rem; margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem; list-style-type: decimal;">
+                            <li>Go to <strong>Receipts</strong> and click <strong>Create New Receipt</strong>.</li>
+                            <li>Select the Client. If they have outstanding invoices, choose the invoice number to link the payment.</li>
+                            <li>Enter the paid amount and payment date.</li>
+                            <li><strong>Select "Credited To Account":</strong> This designates which partner's personal account received the money (e.g. Sajjad, Shrinidhi, or Anish).</li>
+                            <li>Save. The system automatically recalculates the <em>Partner Bank Balances</em> table on the main dashboard overview, reflecting this deposit in their ledger.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="guide-step-accordion">
+                    <div class="guide-step-header" onclick="toggleAccordion(this)">
+                        <div class="guide-step-title">
+                            <span class="guide-step-number">4</span>
+                            <span>Managing Expenses & Withdrawals</span>
+                        </div>
+                        <i class="fas fa-chevron-down guide-step-chevron"></i>
+                    </div>
+                    <div class="guide-step-content">
+                        <p>Business operational costs (hosting renewals, templates, domains) paid out-of-pocket are reconciled as expenses, while partner payments are logged as withdrawals.</p>
+                        <ul style="margin-left: 1.5rem; margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem; list-style-type: disc;">
+                            <li><strong>Expenses:</strong> Logged under <em>Expenses</em>. Designate the category, the partner who paid (debit from), amount, date, and optionally upload a PDF receipt. These subtract from both the business overall balance and that partner's personal account ledger.</li>
+                            <li><strong>Withdrawals:</strong> When a partner draws business profit, navigate to <em>Withdrawals</em> -> <em>Log Withdrawal</em>. Log the partner taking the money, the account it was drawn from (e.g., Sajjad, Shrinidhi, Anish, or "All"), date, and description. This reconciles profit balances equally.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Step 5 -->
+                <div class="guide-step-accordion">
+                    <div class="guide-step-header" onclick="toggleAccordion(this)">
+                        <div class="guide-step-title">
+                            <span class="guide-step-number">5</span>
+                            <span>Triggering Expiration Reminders (WhatsApp)</span>
+                        </div>
+                        <i class="fas fa-chevron-down guide-step-chevron"></i>
+                    </div>
+                    <div class="guide-step-content">
+                        <p>Scalevyn CRM identifies subscriptions expiring within the next 30 days and shows them in the Dashboard & Renewals pages.</p>
+                        <ol style="margin-left: 1.5rem; margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem; list-style-type: decimal;">
+                            <li>Navigate to <strong>Renewals</strong>. Expiring services are highlighted in yellow (expiring in 15 days) or red (already expired).</li>
+                            <li>Click the <strong>Reminder</strong> button in the service row.</li>
+                            <li>A new tab opens, launching WhatsApp Web (utilizing the <code>wa.me</code> click-to-chat API) pre-filled with a professional template:
+                                <div class="step-visual-mock" style="font-family: monospace; font-size: 0.8rem; background: #e8f5e9; border-color: #a5d6a7; color: #1b5e20;">
+                                    "Hello [Client Name], your subscription for [Service Name] is expiring on [Expiry Date]. Please renew to avoid service interruption. - Scalevyn.com"
+                                </div>
+                            </li>
+                            <li>Click send to instantly text the customer.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script>
+    // Theme Manager
+    function toggleTheme() {
+        const html = document.documentElement;
+        const currentTheme = html.getAttribute('data-theme');
+        const nextTheme = currentTheme === 'light' ? 'dark' : 'light';
+        html.setAttribute('data-theme', nextTheme);
+        
+        // Save to localStorage
+        localStorage.setItem('docs-theme', nextTheme);
+        
+        // Update button
+        const icon = document.getElementById('theme-icon');
+        const text = document.getElementById('theme-text');
+        
+        if (nextTheme === 'dark') {
+            icon.className = 'fas fa-sun';
+            text.textContent = 'Light Mode';
+        } else {
+            icon.className = 'fas fa-moon';
+            text.textContent = 'Dark Mode';
+        }
+        
+        // Redraw database SVG paths after transition
+        setTimeout(drawSchemaConnections, 350);
+    }
+
+    // Load theme setting
+    window.addEventListener('DOMContentLoaded', () => {
+        const savedTheme = localStorage.getItem('docs-theme');
+        if (savedTheme === 'dark') {
+            toggleTheme(); // set to dark
+        }
+        
+        // Populate database schema board
+        renderSchemaBoard();
+        
+        // Draw schema lines on load and resize
+        setTimeout(drawSchemaConnections, 100);
+        window.addEventListener('resize', drawSchemaConnections);
+        
+        // Add scroll listener for sticky schema drawing
+        const main = document.querySelector('.main-content');
+        if (main) {
+            main.addEventListener('scroll', drawSchemaConnections);
+        }
+    });
+
+    // Mobile sidebar toggle
+    function toggleMobileSidebar() {
+        const sidebar = document.querySelector('.sidebar');
+        sidebar.classList.toggle('active');
+    }
+
+    // Tab switcher
+    function switchSection(sectId, element) {
+        // Toggle active link
+        document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+        element.classList.add('active');
+
+        // Toggle sections
+        document.querySelectorAll('.doc-section').forEach(sect => sect.classList.remove('active'));
+        const activeSect = document.getElementById('sect-' + sectId);
+        activeSect.classList.add('active');
+
+        // Update header title
+        const titles = {
+            'overview': 'Proposal & Overview',
+            'architecture': 'System Architecture',
+            'schema': 'Database Schema',
+            'features': 'Core Features',
+            'guide': 'User Guide'
+        };
+        document.getElementById('section-title').textContent = titles[sectId];
+        
+        // Close sidebar on mobile
+        document.querySelector('.sidebar').classList.remove('active');
+
+        // If schema tab, calculate canvas offsets
+        if (sectId === 'schema') {
+            setTimeout(drawSchemaConnections, 200);
+        }
+    }
+
+    // Architecture Info Panel
+    const archData = {
+        presentation: {
+            title: 'Presentation Tier (Client Side)',
+            desc: 'Serves dynamic layouts to administrative users and partners. Built using CSS grid, custom variables for color skins, standard JavaScript, and FontAwesome widgets.',
+            files: [
+                { name: 'assets/css/style.css', desc: 'Custom grid system, typography, inputs, variables.' },
+                { name: 'assets/js/main.js', desc: 'Mobile navigation toggle, overlay handlers.' },
+                { name: 'includes/header.php', desc: 'Nav bar, session verification, dynamic page headers.' },
+                { name: 'includes/footer.php', desc: 'Dynamic copyright years, footer HTML.' }
+            ]
+        },
+        includes: {
+            title: 'Includes Layer (Global Shared Scripts)',
+            desc: 'Reusable backend script libraries loaded at the head of modular directories to calculate path mappings, authenticate users, and provide helper methods.',
+            files: [
+                { name: 'includes/header.php', desc: 'Calculates directory nesting prefixes, forces authentication redirects.' },
+                { name: 'includes/functions.php', desc: 'Helper for WhatsApp links, currency layout formatting.' }
+            ]
+        },
+        logic: {
+            title: 'Application Logic Tier (PHP Modules)',
+            desc: 'Consists of self-contained subfolders implementing CRUD interfaces (Create, Read, Update, Delete) and business formulas (partner shares splits, receipt linking).',
+            files: [
+                { name: 'modules/billing/invoices.php', desc: 'Core invoicing grid & status tracking.' },
+                { name: 'modules/quotations/create_quotation.php', desc: 'Interactive estimator tool.' },
+                { name: 'modules/renewals/renewals.php', desc: 'Auto-expiration flags and notification engine.' },
+                { name: 'modules/receipts/create_receipt.php', desc: 'Handles client payment receipts, linked invoices, and credits partner balances.' },
+                { name: 'modules/tickets/tickets.php', desc: 'Client ticketing threads.' },
+                { name: 'modules/expenses/expenses.php', desc: 'Expense categorization with upload receipts.' },
+                { name: 'modules/withdrawals/withdrawals.php', desc: 'Log withdrawals against shared or partner balances.' },
+                { name: 'modules/products/products.php', desc: 'Product inventory/catalog index.' }
+            ]
+        },
+        config: {
+            title: 'Database Connector (PDO Config)',
+            desc: 'Establishes secure, stateful connections between the PHP interpreter and MySQL server using PHP Data Objects (PDO) with error reporting handles.',
+            files: [
+                { name: 'config/db.php', desc: 'PDO Database connection instance initializer.' }
+            ]
+        },
+        database: {
+            title: 'MySQL Database Tier (Data Persistence)',
+            desc: 'Saves configurations, clients registry, financial ledgers, and support tickets in relational schema maps utilizing InnoDB engine constraint checks.',
+            files: [
+                { name: 'database.sql', desc: 'SQL commands creating 14 tables, foreign keys, constraints.' }
+            ]
+        },
+        external: {
+            title: 'External Integrations (WhatsApp API)',
+            desc: 'Leverages the WhatsApp Click-to-Chat API. The backend dynamically calculates text messages and injects clean numbers to trigger reminders instantly.',
+            files: [
+                { name: 'includes/functions.php', desc: 'getWhatsAppLink() constructs the wa.me URL.' },
+                { name: 'modules/renewals/renewals.php', desc: 'Generates dynamic service-expiry reminder messages.' }
+            ]
+        }
+    };
+
+    function showArchInfo(nodeId) {
+        // Remove active class from all SVG nodes
+        document.querySelectorAll('.svg-node').forEach(node => node.classList.remove('active'));
+        
+        // Add active class to clicked node
+        const node = document.getElementById('node-' + nodeId);
+        if (node) node.classList.add('active');
+
+        // Deactivate all glowing paths
+        document.querySelectorAll('.svg-arrow-glow').forEach(path => path.classList.remove('active'));
+        
+        // Activate relevant glowing paths based on selection
+        if (nodeId === 'presentation') {
+            document.getElementById('glow-p-l').classList.add('active');
+        } else if (nodeId === 'logic') {
+            document.getElementById('glow-l-c').classList.add('active');
+        } else if (nodeId === 'config') {
+            document.getElementById('glow-c-d').classList.add('active');
+        }
+
+        const data = archData[nodeId];
+        document.getElementById('arch-info-title').innerHTML = `<i class="fas fa-info-circle"></i> ${data.title}`;
+        document.getElementById('arch-info-desc').textContent = data.desc;
+        
+        const filesUl = document.getElementById('arch-info-files');
+        filesUl.innerHTML = '';
+        data.files.forEach(file => {
+            filesUl.innerHTML += `
+                <li class="arch-panel-item">
+                    <strong><i class="far fa-file-code" style="color: var(--primary); margin-right: 0.25rem;"></i> ${file.name}</strong>
+                    <span>${file.desc}</span>
+                </li>
+            `;
+        });
+        document.getElementById('arch-info-details').style.display = 'block';
+    }
+
+    // Schema Data Definition
+    const dbSchema = {
+        users: {
+            name: 'users',
+            category: 'core',
+            rows: 'Manage admin logins and staff permissions.',
+            fields: [
+                { name: 'id', type: 'INT AUTO_INC', key: 'pk', desc: 'Primary user ID key' },
+                { name: 'username', type: 'VARCHAR(50)', key: 'uq', desc: 'Unique account name' },
+                { name: 'password', type: 'VARCHAR(255)', key: '', desc: 'Bcrypt hashed password' },
+                { name: 'full_name', type: 'VARCHAR(100)', key: '', desc: 'User full display name' },
+                { name: 'dob', type: 'DATE', key: '', desc: 'Date of birth' },
+                { name: 'role', type: "ENUM('admin', 'staff')", key: '', desc: 'System permission levels' },
+                { name: 'created_at', type: 'TIMESTAMP', key: '', desc: 'Record registration time' }
+            ],
+            relations: []
+        },
+        clients: {
+            name: 'clients',
+            category: 'client',
+            rows: 'Registry of customer accounts and contacts.',
+            fields: [
+                { name: 'id', type: 'INT AUTO_INC', key: 'pk', desc: 'Primary client ID' },
+                { name: 'name', type: 'VARCHAR(100)', key: '', desc: 'Organization or contact name' },
+                { name: 'email', type: 'VARCHAR(100)', key: '', desc: 'Primary contact email' },
+                { name: 'email2', type: 'VARCHAR(100)', key: '', desc: 'Secondary CC email' },
+                { name: 'phone', type: 'VARCHAR(20)', key: '', desc: 'Contact mobile number' },
+                { name: 'address', type: 'TEXT', key: '', desc: 'Client billing address' },
+                { name: 'created_at', type: 'TIMESTAMP', key: '', desc: 'Registration timestamp' }
+            ],
+            relations: []
+        },
+        invoices: {
+            name: 'invoices',
+            category: 'financial',
+            rows: 'Itemized client invoices and due amounts.',
+            fields: [
+                { name: 'id', type: 'INT AUTO_INC', key: 'pk', desc: 'Primary invoice ID' },
+                { name: 'invoice_number', type: 'VARCHAR(20)', key: 'uq', desc: 'Unique Invoice reference code' },
+                { name: 'client_id', type: 'INT', key: 'fk', refTable: 'clients', refField: 'id', desc: 'Target client relation' },
+                { name: 'invoice_date', type: 'DATE', key: '', desc: 'Billing creation date' },
+                { name: 'due_date', type: 'DATE', key: '', desc: 'Final invoice payment limit' },
+                { name: 'status', type: "ENUM('draft','sent','paid','cancelled','overdue')", key: '', desc: 'Current invoicing cycle' },
+                { name: 'total_amount', type: 'DECIMAL(10,2)', key: '', desc: 'Invoice total gross amount' },
+                { name: 'advance_amount', type: 'DECIMAL(10,2)', key: '', desc: 'Retainer deposit required' },
+                { name: 'is_advance_paid', type: 'TINYINT(1)', key: '', desc: 'Advance payment check status' },
+                { name: 'notes', type: 'TEXT', key: '', desc: 'Invoicing internal notes' },
+                { name: 'created_at', type: 'TIMESTAMP', key: '', desc: 'Record creation timestamp' }
+            ],
+            relations: [
+                { from: 'client_id', toTable: 'clients', toField: 'id' }
+            ]
+        },
+        invoice_items: {
+            name: 'invoice_items',
+            category: 'financial',
+            rows: 'Granular line items listed inside invoices.',
+            fields: [
+                { name: 'id', type: 'INT AUTO_INC', key: 'pk', desc: 'Primary item ID' },
+                { name: 'invoice_id', type: 'INT', key: 'fk', refTable: 'invoices', refField: 'id', desc: 'Parent invoice relation' },
+                { name: 'description', type: 'TEXT', key: '', desc: 'Billing row description detail' },
+                { name: 'quantity', type: 'DECIMAL(10,2)', key: '', desc: 'Number of units purchased' },
+                { name: 'unit_price', type: 'DECIMAL(10,2)', key: '', desc: 'Rate per single unit' },
+                { name: 'total', type: 'DECIMAL(10,2)', key: '', desc: 'Row value (quantity * unit_price)' }
+            ],
+            relations: [
+                { from: 'invoice_id', toTable: 'invoices', toField: 'id' }
+            ]
+        },
+        transactions: {
+            name: 'transactions',
+            category: 'financial',
+            rows: 'Logs ledger payments collected against invoices.',
+            fields: [
+                { name: 'id', type: 'INT AUTO_INC', key: 'pk', desc: 'Primary transaction ID' },
+                { name: 'invoice_id', type: 'INT', key: 'fk', refTable: 'invoices', refField: 'id', desc: 'Linked invoice (nullable)' },
+                { name: 'client_id', type: 'INT', key: 'fk', refTable: 'clients', refField: 'id', desc: 'Paying client relation' },
+                { name: 'amount', type: 'DECIMAL(10,2)', key: '', desc: 'Net currency amount received' },
+                { name: 'payment_date', type: 'DATE', key: '', desc: 'Payment settlement date' },
+                { name: 'payment_method', type: 'VARCHAR(50)', key: '', desc: 'UPI, Cash, Bank, Cheque' },
+                { name: 'account_credited', type: 'VARCHAR(100)', key: '', desc: 'Partner account: Sajjad, Shrinidhi, Anish' },
+                { name: 'reference_number', type: 'VARCHAR(100)', key: '', desc: 'UPI or Bank transaction reference' },
+                { name: 'notes', type: 'TEXT', key: '', desc: 'Reconciliation notes' },
+                { name: 'created_at', type: 'TIMESTAMP', key: '', desc: 'Record creation timestamp' }
+            ],
+            relations: [
+                { from: 'invoice_id', toTable: 'invoices', toField: 'id' },
+                { from: 'client_id', toTable: 'clients', toField: 'id' }
+            ]
+        },
+        expenses: {
+            name: 'expenses',
+            category: 'financial',
+            rows: 'Operational expense ledger paid by partners.',
+            fields: [
+                { name: 'id', type: 'INT AUTO_INC', key: 'pk', desc: 'Primary expense ID' },
+                { name: 'category', type: 'VARCHAR(50)', key: '', desc: 'Hosting, Templates, Tax, Office' },
+                { name: 'debit_from', type: 'VARCHAR(50)', key: '', desc: 'Partner paying: Sajjad, Shrinidhi, Anish' },
+                { name: 'amount', type: 'DECIMAL(10,2)', key: '', desc: 'Expense total price' },
+                { name: 'expense_date', type: 'DATE', key: '', desc: 'Date purchase was made' },
+                { name: 'description', type: 'TEXT', key: '', desc: 'Purchase item details' },
+                { name: 'receipt_path', type: 'VARCHAR(255)', key: '', desc: 'Local path of receipt attachment' },
+                { name: 'created_at', type: 'TIMESTAMP', key: '', desc: 'Record insertion time' }
+            ],
+            relations: []
+        },
+        tickets: {
+            name: 'tickets',
+            category: 'client',
+            rows: 'Client support ticketing incidents database.',
+            fields: [
+                { name: 'id', type: 'INT AUTO_INC', key: 'pk', desc: 'Primary ticket ID' },
+                { name: 'client_id', type: 'INT', key: 'fk', refTable: 'clients', refField: 'id', desc: 'Submitting client relation' },
+                { name: 'subject', type: 'VARCHAR(255)', key: '', desc: 'Ticketing main subject line' },
+                { name: 'description', type: 'TEXT', key: '', desc: 'Detailed issue description' },
+                { name: 'priority', type: "ENUM('low','medium','high','urgent')", key: '', desc: 'Ticket urgency weight' },
+                { name: 'status', type: "ENUM('open','in-progress','resolved','closed')", key: '', desc: 'Support workflow state' },
+                { name: 'created_at', type: 'TIMESTAMP', key: '', desc: 'Ticket creation timestamp' },
+                { name: 'updated_at', type: 'TIMESTAMP', key: '', desc: 'Auto update timestamp' }
+            ],
+            relations: [
+                { from: 'client_id', toTable: 'clients', toField: 'id' }
+            ]
+        },
+        ticket_messages: {
+            name: 'ticket_messages',
+            category: 'client',
+            rows: 'Chronological thread messages for support tickets.',
+            fields: [
+                { name: 'id', type: 'INT AUTO_INC', key: 'pk', desc: 'Primary message ID' },
+                { name: 'ticket_id', type: 'INT', key: 'fk', refTable: 'tickets', refField: 'id', desc: 'Parent ticket thread' },
+                { name: 'user_id', type: 'INT', key: 'fk', refTable: 'users', refField: 'id', desc: 'Responding staff member (nullable)' },
+                { name: 'message', type: 'TEXT', key: '', desc: 'Response body message text' },
+                { name: 'created_at', type: 'TIMESTAMP', key: '', desc: 'Response submission timestamp' }
+            ],
+            relations: [
+                { from: 'ticket_id', toTable: 'tickets', toField: 'id' },
+                { from: 'user_id', toTable: 'users', toField: 'id' }
+            ]
+        },
+        services: {
+            name: 'services',
+            category: 'client',
+            rows: 'Tracks active subscription domains and services.',
+            fields: [
+                { name: 'id', type: 'INT AUTO_INC', key: 'pk', desc: 'Primary service subscription ID' },
+                { name: 'client_id', type: 'INT', key: 'fk', refTable: 'clients', refField: 'id', desc: 'Customer account owner' },
+                { name: 'service_type', type: "ENUM('hosting','domain','maintenance','other')", key: '', desc: 'Classification code' },
+                { name: 'domain_name', type: 'VARCHAR(255)', key: '', desc: 'Associated domain identifier' },
+                { name: 'cost', type: 'DECIMAL(10,2)', key: '', desc: 'Subscription renewal cost' },
+                { name: 'purchase_date', type: 'DATE', key: '', desc: 'Date subscription purchased' },
+                { name: 'duration', type: 'VARCHAR(50)', key: '', desc: 'Billing cycle e.g. "1 Year"' },
+                { name: 'name_of_service', type: 'VARCHAR(255)', key: '', desc: 'Display name of services' },
+                { name: 'expiry_date', type: 'DATE', key: '', desc: 'Expiration and renewal deadline' },
+                { name: 'last_reminder_sent', type: 'DATE', key: '', desc: 'Date of last reminder trigger' },
+                { name: 'status', type: "ENUM('active','expired','cancelled')", key: '', desc: 'Subscription lifecycle status' },
+                { name: 'created_at', type: 'TIMESTAMP', key: '', desc: 'Record insertion time' }
+            ],
+            relations: [
+                { from: 'client_id', toTable: 'clients', toField: 'id' }
+            ]
+        },
+        receipts: {
+            name: 'receipts',
+            category: 'financial',
+            rows: 'Financial revenue receipts issued to clients.',
+            fields: [
+                { name: 'id', type: 'INT AUTO_INC', key: 'pk', desc: 'Primary receipt ID' },
+                { name: 'receipt_number', type: 'VARCHAR(20)', key: 'uq', desc: 'Unique Receipt reference code' },
+                { name: 'client_id', type: 'INT', key: 'fk', refTable: 'clients', refField: 'id', desc: 'Paying client relation' },
+                { name: 'amount', type: 'DECIMAL(10,2)', key: '', desc: 'Currency received amount' },
+                { name: 'received_date', type: 'DATE', key: '', desc: 'Payment receipt date' },
+                { name: 'description', type: 'TEXT', key: '', desc: 'Brief memo descriptions' },
+                { name: 'payment_method', type: 'VARCHAR(50)', key: '', desc: 'UPI, Cash, Bank Transfer' },
+                { name: 'credited_to_account', type: 'VARCHAR(50)', key: '', desc: 'Partner ledger: Sajjad, Shrinidhi, Anish' },
+                { name: 'created_at', type: 'TIMESTAMP', key: '', desc: 'Record insertion timestamp' }
+            ],
+            relations: [
+                { from: 'client_id', toTable: 'clients', toField: 'id' }
+            ]
+        },
+        quotations: {
+            name: 'quotations',
+            category: 'financial',
+            rows: 'Pre-sales client estimates and quotes.',
+            fields: [
+                { name: 'id', type: 'INT AUTO_INC', key: 'pk', desc: 'Primary estimate ID' },
+                { name: 'quotation_number', type: 'VARCHAR(20)', key: 'uq', desc: 'Unique Quote reference code' },
+                { name: 'client_id', type: 'INT', key: 'fk', refTable: 'clients', refField: 'id', desc: 'Prospective client' },
+                { name: 'quotation_date', type: 'DATE', key: '', desc: 'Issue date' },
+                { name: 'expiry_date', type: 'DATE', key: '', desc: 'Quote validity threshold' },
+                { name: 'status', type: "ENUM('draft','sent','accepted','rejected','expired')", key: '', desc: 'Quote progress state' },
+                { name: 'total_amount', type: 'DECIMAL(10,2)', key: '', desc: 'Estimate total gross amount' },
+                { name: 'notes', type: 'TEXT', key: '', desc: 'Proposal comments' },
+                { name: 'created_at', type: 'TIMESTAMP', key: '', desc: 'Record creation timestamp' }
+            ],
+            relations: [
+                { from: 'client_id', toTable: 'clients', toField: 'id' }
+            ]
+        },
+        quotation_items: {
+            name: 'quotation_items',
+            category: 'financial',
+            rows: 'Granular estimates details item lists.',
+            fields: [
+                { name: 'id', type: 'INT AUTO_INC', key: 'pk', desc: 'Primary quote item ID' },
+                { name: 'quotation_id', type: 'INT', key: 'fk', refTable: 'quotations', refField: 'id', desc: 'Parent quotation relation' },
+                { name: 'description', type: 'TEXT', key: '', desc: 'Line item description detail' },
+                { name: 'quantity', type: 'DECIMAL(10,2)', key: '', desc: 'Units volume estimated' },
+                { name: 'unit_price', type: 'DECIMAL(10,2)', key: '', desc: 'Estimated item cost rate' },
+                { name: 'total', type: 'DECIMAL(10,2)', key: '', desc: 'Estimate row subtotal' }
+            ],
+            relations: [
+                { from: 'quotation_id', toTable: 'quotations', toField: 'id' }
+            ]
+        },
+        products: {
+            name: 'products',
+            category: 'core',
+            rows: 'Preset items inventory list and standard prices.',
+            fields: [
+                { name: 'id', type: 'INT AUTO_INC', key: 'pk', desc: 'Primary product ID' },
+                { name: 'name', type: 'VARCHAR(255)', key: '', desc: 'Product/Service name' },
+                { name: 'price', type: 'DECIMAL(10,2)', key: '', desc: 'Standard unit price defaults' },
+                { name: 'created_at', type: 'TIMESTAMP', key: '', desc: 'Record insertion timestamp' }
+            ],
+            relations: []
+        },
+        withdrawals: {
+            name: 'withdrawals',
+            category: 'financial',
+            rows: 'Records cash withdrawals debited to partners.',
+            fields: [
+                { name: 'id', type: 'INT AUTO_INC', key: 'pk', desc: 'Primary withdrawal ID' },
+                { name: 'withdrawn_by', type: 'VARCHAR(50)', key: '', desc: 'Who withdrew: Sajjad, Shrinidhi, Anish, All' },
+                { name: 'withdrawn_from', type: 'VARCHAR(50)', key: '', desc: 'Drawn from: Sajjad, Shrinidhi, Anish bank accounts' },
+                { name: 'amount', type: 'DECIMAL(10,2)', key: '', desc: 'Cash amount withdrawn' },
+                { name: 'withdrawal_date', type: 'DATE', key: '', desc: 'Date of withdrawal execution' },
+                { name: 'description', type: 'TEXT', key: '', desc: 'Withdrawal purpose memo' },
+                { name: 'created_at', type: 'TIMESTAMP', key: '', desc: 'Record insertion timestamp' }
+            ],
+            relations: []
+        }
+    };
+
+    // Render Database Schema board cards
+    function renderSchemaBoard() {
+        const board = document.getElementById('schema-board');
+        board.innerHTML = '';
+
+        for (const tblKey in dbSchema) {
+            const table = dbSchema[tblKey];
+            let fieldsHtml = '';
+            
+            table.fields.forEach(field => {
+                let keyIcon = '';
+                if (field.key === 'pk') {
+                    keyIcon = '<i class="fas fa-key key-pk" title="Primary Key"></i>';
+                } else if (field.key === 'fk') {
+                    keyIcon = '<i class="fas fa-link key-fk" title="Foreign Key"></i>';
+                } else if (field.key === 'uq') {
+                    keyIcon = '<i class="fas fa-fingerprint" style="color: var(--primary-light); font-size:0.75rem;" title="Unique constraint"></i>';
+                }
+
+                fieldsHtml += `
+                    <li class="schema-field-item" data-field-name="${field.name}">
+                        <span class="schema-field-name">${keyIcon} ${field.name}</span>
+                        <span class="schema-field-type" title="${field.desc}">${field.type}</span>
+                    </li>
+                `;
+            });
+
+            board.innerHTML += `
+                <div class="schema-table-card" id="tbl-card-${table.name}" 
+                     data-table-category="${table.category}" 
+                     onclick="highlightTable('${table.name}')" 
+                     ondblclick="clearSchemaHighlight()">
+                    <div class="schema-table-header">
+                        <span class="schema-table-name"><i class="fas fa-table" style="color: var(--primary)"></i> ${table.name}</span>
+                        <span class="schema-table-rows-count" title="${table.rows}">${table.fields.length} cols</span>
+                    </div>
+                    <ul class="schema-table-fields">
+                        ${fieldsHtml}
+                    </ul>
+                </div>
+            `;
+        }
+    }
+
+    // Highlight relationships of a table
+    function highlightTable(tableName) {
+        // Dim all tables first
+        document.querySelectorAll('.schema-table-card').forEach(card => {
+            card.classList.remove('highlighted');
+            card.classList.add('dimmed');
+        });
+
+        // Highlight selected table
+        const selectedCard = document.getElementById(`tbl-card-${tableName}`);
+        selectedCard.classList.remove('dimmed');
+        selectedCard.classList.add('highlighted');
+
+        // Find and highlight related tables
+        const tableData = dbSchema[tableName];
+        const relatedTableNames = new Set();
+        
+        // Outward relations (defined inside this table)
+        tableData.relations.forEach(rel => {
+            relatedTableNames.add(rel.toTable);
+        });
+
+        // Inward relations (other tables referencing this table)
+        for (const key in dbSchema) {
+            const table = dbSchema[key];
+            table.relations.forEach(rel => {
+                if (rel.toTable === tableName) {
+                    relatedTableNames.add(table.name);
+                }
+            });
+        }
+
+        // Apply highlights to related cards
+        relatedTableNames.forEach(tbl => {
+            const card = document.getElementById(`tbl-card-${tbl}`);
+            if (card) {
+                card.classList.remove('dimmed');
+                card.classList.add('highlighted');
+            }
+        });
+
+        // Draw SVG lines representing connections
+        drawSchemaConnections(tableName, relatedTableNames);
+    }
+
+    // Draw lines connecting highlighted tables
+    function drawSchemaConnections(activeTable = null, relatedTables = new Set()) {
+        const svg = document.getElementById('schema-svg');
+        svg.innerHTML = ''; // Clear lines
+
+        if (!activeTable) return;
+
+        const board = document.getElementById('schema-board');
+        const boardRect = board.getBoundingClientRect();
+        
+        // Set SVG view size to match schema board exactly
+        svg.setAttribute('width', board.offsetWidth);
+        svg.setAttribute('height', board.offsetHeight);
+
+        const activeCard = document.getElementById(`tbl-card-${activeTable}`);
+        if (!activeCard) return;
+        const activeRect = activeCard.getBoundingClientRect();
+        
+        // Source Center position
+        const srcX = (activeRect.left - boardRect.left) + (activeRect.width / 2);
+        const srcY = (activeRect.top - boardRect.top) + (activeRect.height / 2);
+
+        // Draw connections to related tables
+        relatedTables.forEach(relatedTblName => {
+            const destCard = document.getElementById(`tbl-card-${relatedTblName}`);
+            if (!destCard) return;
+            const destRect = destCard.getBoundingClientRect();
+            
+            // Dest Center position
+            const dstX = (destRect.left - boardRect.left) + (destRect.width / 2);
+            const dstY = (destRect.top - boardRect.top) + (destRect.height / 2);
+
+            // Compute bezier curve midpoints
+            const cp1X = srcX + (dstX - srcX) * 0.3;
+            const cp1Y = srcY;
+            const cp2X = srcX + (dstX - srcX) * 0.7;
+            const cp2Y = dstY;
+
+            // Draw line path
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('d', `M ${srcX} ${srcY} C ${cp1X} ${cp1Y}, ${cp2X} ${cp2Y}, ${dstX} ${dstY}`);
+            path.setAttribute('class', 'relation-line active');
+            
+            // Use primary emerald color for active connections
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const color = isDark ? '#10b981' : '#059669';
+            path.setAttribute('stroke', color);
+            
+            svg.appendChild(path);
+        });
+    }
+
+    // Reset Highlights
+    function clearSchemaHighlight() {
+        document.querySelectorAll('.schema-table-card').forEach(card => {
+            card.classList.remove('dimmed');
+            card.classList.remove('highlighted');
+        });
+        
+        const svg = document.getElementById('schema-svg');
+        svg.innerHTML = ''; // Clear line canvas
+    }
+
+    // Filter tables based on search field query
+    function filterSchema() {
+        clearSchemaHighlight();
+        const query = document.getElementById('schema-search').value.toLowerCase();
+        
+        document.querySelectorAll('.schema-table-card').forEach(card => {
+            const tableName = card.id.replace('tbl-card-', '');
+            const tableData = dbSchema[tableName];
+            
+            let match = tableName.toLowerCase().includes(query);
+            
+            // Or match field names inside
+            if (!match) {
+                tableData.fields.forEach(f => {
+                    if (f.name.toLowerCase().includes(query) || f.type.toLowerCase().includes(query)) {
+                        match = true;
+                    }
+                });
+            }
+
+            if (match) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+
+    // Filter categories (core, financials, client, all)
+    function filterSchemaCategory(category, element) {
+        clearSchemaHighlight();
+        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+        element.classList.add('active');
+
+        document.querySelectorAll('.schema-table-card').forEach(card => {
+            const tableCat = card.getAttribute('data-table-category');
+            if (category === 'all' || tableCat === category) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+
+    // User Guide Collapsible Accordion logic
+    function toggleAccordion(header) {
+        const accordion = header.parentElement;
+        const isActive = accordion.classList.contains('active');
+        
+        // Close all accordions
+        document.querySelectorAll('.guide-step-accordion').forEach(item => {
+            item.classList.remove('active');
+        });
+
+        // Toggle active status
+        if (!isActive) {
+            accordion.classList.add('active');
+        }
+    }
+
+    // Clipboard Copy Helper
+    function copyCode(btn) {
+        const codeElement = btn.parentElement.nextElementSibling;
+        const text = codeElement.textContent;
+        
+        navigator.clipboard.writeText(text).then(() => {
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check" style="color: var(--primary-light)"></i> Copied!';
+            setTimeout(() => {
+                btn.innerHTML = originalHTML;
+            }, 2000);
+        }).catch(err => {
+            console.error('Failed to copy: ', err);
+        });
+    }
+
+    // Mock CRM App Simulator Switcher & Interaction
+    const mockCrmTemplates = {
+        dashboard: `
+            <div class="mock-crm-grid">
+                <div class="mock-crm-card">
+                    <div class="mock-crm-card-title">Total Revenue</div>
+                    <div class="mock-crm-card-val" style="color: var(--primary);">₹2,45,000.00</div>
+                </div>
+                <div class="mock-crm-card">
+                    <div class="mock-crm-card-title">Available Balance</div>
+                    <div class="mock-crm-card-val" style="color: var(--primary-dark);">₹1,82,500.00</div>
+                </div>
+                <div class="mock-crm-card">
+                    <div class="mock-crm-card-title">Total Pending</div>
+                    <div class="mock-crm-card-val" style="color: var(--danger);">₹62,500.00</div>
+                </div>
+                <div class="mock-crm-card">
+                    <div class="mock-crm-card-title">Open Tickets</div>
+                    <div class="mock-crm-card-val">2</div>
+                </div>
+            </div>
+            
+            <div class="mock-crm-panel">
+                <div class="mock-crm-panel-header">Partner Bank Balances</div>
+                <div style="overflow-x: auto;">
+                    <table class="mock-crm-table">
+                        <thead>
+                            <tr>
+                                <th>Partner</th>
+                                <th>Credited Receipts</th>
+                                <th>Withdrawals</th>
+                                <th>Expenses</th>
+                                <th>Current Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Sajjad</strong></td>
+                                <td style="color: var(--primary);">₹1,15,000.00</td>
+                                <td style="color: var(--danger);">₹20,000.00</td>
+                                <td style="color: var(--danger);">₹15,000.00</td>
+                                <td style="font-weight:700;">₹80,000.00</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Shrinidhi</strong></td>
+                                <td style="color: var(--primary);">₹95,000.00</td>
+                                <td style="color: var(--danger);">₹15,000.00</td>
+                                <td style="color: var(--danger);">₹22,500.00</td>
+                                <td style="font-weight:700;">₹57,500.00</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Anish</strong></td>
+                                <td style="color: var(--primary);">₹35,000.00</td>
+                                <td style="color: var(--danger);">₹10,000.00</td>
+                                <td style="color: var(--danger);">₹5,000.00</td>
+                                <td style="font-weight:700;">₹20,000.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="mock-crm-panel">
+                <div class="mock-crm-panel-header">Partner Shared Ledger Splits</div>
+                <div style="overflow-x: auto;">
+                    <table class="mock-crm-table">
+                        <thead>
+                            <tr>
+                                <th>Partner</th>
+                                <th>Gross Profit Share</th>
+                                <th>Total Personal Draw</th>
+                                <th>Reconciliation Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Sajjad</strong></td>
+                                <td style="color: var(--primary);">₹67,500.00</td>
+                                <td style="color: var(--danger);">₹35,000.00</td>
+                                <td style="font-weight:700; color: var(--primary);">+₹32,500.00</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Shrinidhi</strong></td>
+                                <td style="color: var(--primary);">₹67,500.00</td>
+                                <td style="color: var(--danger);">₹37,500.00</td>
+                                <td style="font-weight:700; color: var(--primary);">+₹30,000.00</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Anish</strong></td>
+                                <td style="color: var(--primary);">₹67,500.00</td>
+                                <td style="color: var(--danger);">₹15,000.00</td>
+                                <td style="font-weight:700; color: var(--primary);">+₹52,500.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        `,
+        invoices: `
+            <div style="display:flex; justify-content:space-between; margin-bottom:1rem;">
+                <h4 style="font-weight:700;">Client Invoices</h4>
+                <button class="mock-btn mock-btn-primary" onclick="alert('Creating invoice forms would open dynamic fields')"><i class="fas fa-plus"></i> New Invoice</button>
+            </div>
+            
+            <div class="mock-crm-panel">
+                <table class="mock-crm-table">
+                    <thead>
+                        <tr>
+                            <th>Invoice #</th>
+                            <th>Client</th>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="mock-invoices-tbody">
+                        <tr>
+                            <td><strong>#INV-2026-001</strong></td>
+                            <td>Acme Corp</td>
+                            <td>12 Jul, 2026</td>
+                            <td>₹45,000.00</td>
+                            <td><span class="mock-badge mock-badge-paid">Paid</span></td>
+                            <td><button class="mock-btn" style="background:#e2e8f0; color:#475569;" onclick="showMockInvoicePrint('INV-2026-001', 'Acme Corp', '45,000.00', 'Paid')">Print View</button></td>
+                        </tr>
+                        <tr>
+                            <td><strong>#INV-2026-002</strong></td>
+                            <td>Globex Ltd</td>
+                            <td>10 Jul, 2026</td>
+                            <td>₹15,000.00</td>
+                            <td><span class="mock-badge mock-badge-pending">Sent</span></td>
+                            <td><button class="mock-btn" style="background:#e2e8f0; color:#475569;" onclick="showMockInvoicePrint('INV-2026-002', 'Globex Ltd', '15,000.00', 'Sent')">Print View</button></td>
+                        </tr>
+                        <tr>
+                            <td><strong>#INV-2026-003</strong></td>
+                            <td>Stark Industries</td>
+                            <td>01 Jul, 2026</td>
+                            <td>₹85,000.00</td>
+                            <td><span class="mock-badge mock-badge-overdue">Overdue</span></td>
+                            <td><button class="mock-btn" style="background:#e2e8f0; color:#475569;" onclick="showMockInvoicePrint('INV-2026-003', 'Stark Industries', '85,000.00', 'Overdue')">Print View</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="mock-invoice-print-container" style="display:none; margin-top:1.5rem; padding:1.5rem; background:white; border:1px solid #cbd5e1; border-radius:0.5rem; color:#1e293b; font-family:'Courier New', monospace;">
+                <!-- Printable layout populated by function -->
+            </div>
+        `,
+        quotations: `
+            <div style="display:flex; justify-content:space-between; margin-bottom:1rem;">
+                <h4 style="font-weight:700;">Active Quotations & Estimates</h4>
+                <button class="mock-btn mock-btn-primary" onclick="alert('Estimate creation form triggered')"><i class="fas fa-plus"></i> New Quote</button>
+            </div>
+            <div class="mock-crm-panel">
+                <table class="mock-crm-table">
+                    <thead>
+                        <tr>
+                            <th>Quote #</th>
+                            <th>Client</th>
+                            <th>Date</th>
+                            <th>Total Amount</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>#QTN-2026-042</strong></td>
+                            <td>Wayne Enterprises</td>
+                            <td>14 Jul, 2026</td>
+                            <td>₹1,80,000.00</td>
+                            <td><span class="mock-badge mock-badge-pending" style="background:#eff6ff; color:#1e40af;">Accepted</span></td>
+                            <td>
+                                <button class="mock-btn mock-btn-primary" id="btn-convert-mock-quote" onclick="convertMockQuote('QTN-2026-042', 'Wayne Enterprises', '1,80,000.00')">
+                                    <i class="fas fa-magic"></i> Convert to Invoice
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>#QTN-2026-041</strong></td>
+                            <td>Oscorp Inc</td>
+                            <td>08 Jul, 2026</td>
+                            <td>₹60,000.00</td>
+                            <td><span class="mock-badge" style="background:#f1f5f9; color:#475569;">Draft</span></td>
+                            <td><button class="mock-btn" style="background:#e2e8f0; color:#475569;" disabled>Draft State</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="mock-quote-toast" style="display:none; padding:0.75rem 1rem; border-radius:0.5rem; background:#dcfce7; border:1px solid #86efac; color:#166534; font-weight:600; margin-top:1rem; text-align:center;">
+                <!-- Notification message -->
+            </div>
+        `,
+        renewals: `
+            <h4 style="font-weight:700; margin-bottom:1rem;">Hosting & Subscription Expirations</h4>
+            <div class="mock-crm-panel">
+                <table class="mock-crm-table">
+                    <thead>
+                        <tr>
+                            <th>Service Name</th>
+                            <th>Client</th>
+                            <th>Expiry Date</th>
+                            <th>Cost</th>
+                            <th>Status</th>
+                            <th>Reminders</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><i class="fas fa-server" style="color:var(--primary); margin-right:0.35rem;"></i> Dedicated Server Hosting</td>
+                            <td>Wayne Enterprises</td>
+                            <td>19 Jul, 2026 (In 5 days)</td>
+                            <td>₹25,000.00</td>
+                            <td><span class="mock-badge mock-badge-pending">Expiring</span></td>
+                            <td>
+                                <button class="mock-btn" style="background-color:#25d366; color:white;" onclick="triggerMockWhatsApp('Wayne Enterprises', 'Dedicated Server Hosting', '19 Jul, 2026')">
+                                    <i class="fab fa-whatsapp"></i> WhatsApp Reminder
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><i class="fas fa-globe" style="color:var(--primary); margin-right:0.35rem;"></i> domain: waynecorp.in</td>
+                            <td>Wayne Enterprises</td>
+                            <td>15 Aug, 2026</td>
+                            <td>₹1,200.00</td>
+                            <td><span class="mock-badge mock-badge-paid">Active</span></td>
+                            <td>
+                                <button class="mock-btn" style="background-color:#25d366; color:white;" onclick="triggerMockWhatsApp('Wayne Enterprises', 'domain: waynecorp.in', '15 Aug, 2026')">
+                                    <i class="fab fa-whatsapp"></i> WhatsApp Reminder
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><i class="fas fa-tools" style="color:var(--primary); margin-right:0.35rem;"></i> SEO & Maintenance Contract</td>
+                            <td>Oscorp Inc</td>
+                            <td>10 Jul, 2026</td>
+                            <td>₹15,000.00</td>
+                            <td><span class="mock-badge mock-badge-overdue">Expired</span></td>
+                            <td>
+                                <button class="mock-btn" style="background-color:#25d366; color:white;" onclick="triggerMockWhatsApp('Oscorp Inc', 'SEO & Maintenance Contract', '10 Jul, 2026')">
+                                    <i class="fab fa-whatsapp"></i> WhatsApp Reminder
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="mock-wa-toast" style="display:none; padding:1rem; border-radius:0.5rem; background:#e8f5e9; border:1px solid #a5d6a7; color:#1b5e20; font-family:'Courier New', monospace; font-size:0.8rem; margin-top:1rem; border-left:4px solid #25d366;">
+                <!-- Simulated WA Window -->
+            </div>
+        `,
+        tickets: `
+            <div style="display:flex; justify-content:space-between; margin-bottom:1rem;">
+                <h4 style="font-weight:700;">Customer Support Incidents</h4>
+                <span style="font-size:0.75rem; color:var(--text-muted);">Active helpdesk tickets</span>
+            </div>
+            
+            <div style="display:grid; grid-template-columns: 2fr 3fr; gap:1rem;">
+                <!-- Left: tickets list -->
+                <div style="display:flex; flex-direction:column; gap:0.5rem;">
+                    <div style="padding:0.75rem; border:1px solid var(--primary); background:var(--primary-glow); border-radius:0.5rem; cursor:pointer;" onclick="switchMockTicketThread(1)">
+                        <div style="display:flex; justify-content:space-between; font-weight:700;">
+                            <span>#TCK-0012: Mail Server Config</span>
+                            <span class="mock-badge mock-badge-overdue" style="background:#fee2e2; color:#ef4444;">Urgent</span>
+                        </div>
+                        <div style="font-size:0.7rem; color:var(--text-muted); margin-top:0.25rem;">Acme Corp | Status: Open</div>
+                    </div>
+                    <div style="padding:0.75rem; border:1px solid var(--border-color); background:var(--bg-card); border-radius:0.5rem; cursor:pointer; opacity:0.6;" onclick="alert('In actual system, clicking this re-loads the active messages thread.')">
+                        <div style="display:flex; justify-content:space-between; font-weight:700;">
+                            <span>#TCK-0011: Webhook Failures</span>
+                            <span class="mock-badge mock-badge-pending">Medium</span>
+                        </div>
+                        <div style="font-size:0.7rem; color:var(--text-muted); margin-top:0.25rem;">Globex Ltd | Status: In-Progress</div>
+                    </div>
+                </div>
+                <!-- Right: thread window -->
+                <div class="mock-crm-card" style="padding:1rem; display:flex; flex-direction:column; justify-content:space-between; gap:0.5rem; margin-bottom:0;">
+                    <div class="mock-chat-thread" id="mock-ticket-chat-thread">
+                        <!-- Messages logged dynamically -->
+                    </div>
+                    <div style="display:flex; gap:0.5rem; margin-top:0.5rem;">
+                        <input type="text" id="mock-ticket-reply-text" placeholder="Type a response..." style="flex-grow:1; padding:0.4rem; border:1px solid var(--border-color); border-radius:0.375rem; font-size:0.8rem; background:var(--bg-card); color:var(--text-main);">
+                        <button class="mock-btn mock-btn-primary" onclick="sendMockTicketReply()">Reply</button>
+                    </div>
+                </div>
+            </div>
+        `
+    };
+
+    // Keep track of support messages dynamically in current session
+    let mockTicketMessages = [
+        { sender: 'Client', author: 'Acme Corp Admin', message: 'Hello, our employees are not receiving emails from the webmail app since this morning. Please look into it urgently.', time: '09:15 AM' },
+        { sender: 'Staff', author: 'Shrinidhi (Staff)', message: 'Hello Acme Corp! I have inspected the logs and noticed your domain DNS MX records were pointed incorrectly. I am resetting them to your mail server now.', time: '09:30 AM' }
+    ];
+
+    function switchMockPage(pageId, linkElement) {
+        // Toggle link active state
+        document.querySelectorAll('.mock-crm-nav-link').forEach(link => link.classList.remove('active'));
+        linkElement.classList.add('active');
+
+        // Update header
+        const pageNames = {
+            dashboard: 'Dashboard Overview',
+            invoices: 'Invoices & Billing Registry',
+            quotations: 'Quotations Management',
+            renewals: 'Service Subscription Renewals',
+            tickets: 'Support Tickets Desk'
+        };
+        document.getElementById('mock-crm-header-title').textContent = pageNames[pageId];
+
+        // Replace content
+        const bodyContent = document.getElementById('mock-crm-body-content');
+        bodyContent.innerHTML = mockCrmTemplates[pageId];
+
+        // If ticket thread, render thread messages
+        if (pageId === 'tickets') {
+            renderMockTicketThread();
+        }
+    }
+
+    // Invoice print preview simulator
+    function showMockInvoicePrint(invNo, clientName, amount, status) {
+        const container = document.getElementById('mock-invoice-print-container');
+        container.style.display = 'block';
+        container.innerHTML = `
+            <div style="display:flex; justify-content:space-between; border-bottom:2px solid #1e293b; padding-bottom:1rem; margin-bottom:1rem;">
+                <div>
+                    <h3 style="margin:0; font-weight:700;">SCALEVYN CRM</h3>
+                    <p style="margin:0.25rem 0 0 0; font-size:0.75rem;">Scalevyn.com Billing Ledger Sheet</p>
+                </div>
+                <div style="text-align:right;">
+                    <h4 style="margin:0;">INVOICE \${invNo}</h4>
+                    <p style="margin:0.25rem 0 0 0; font-size:0.75rem;">Date: 14 Jul, 2026</p>
+                </div>
+            </div>
+            
+            <table style="width:100%; border-collapse:collapse; margin-bottom:1.5rem; font-size:0.75rem;">
+                <tr>
+                    <td style="width:50%; padding:0;"><strong>Billed To:</strong><br>\${clientName}<br>Email: billing@\${clientName.toLowerCase().replace(/\\s/g, '')}.com</td>
+                    <td style="width:50%; padding:0; text-align:right; vertical-align:top;"><strong>Status:</strong><br><span style="text-transform:uppercase; font-weight:700;">\${status}</span></td>
+                </tr>
+            </table>
+
+            <table style="width:100%; border-collapse:collapse; margin-bottom:1.5rem; font-size:0.75rem;">
+                <thead>
+                    <tr style="border-bottom:1px solid #1e293b; border-top:1px solid #1e293b;">
+                        <th style="text-align:left; padding:0.5rem 0;">Description</th>
+                        <th style="text-align:center; padding:0.5rem 0; width:80px;">Qty</th>
+                        <th style="text-align:right; padding:0.5rem 0; width:100px;">Price</th>
+                        <th style="text-align:right; padding:0.5rem 0; width:100px;">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="padding:0.5rem 0; font-weight:500;">CRM Development and Platform Consulting Services</td>
+                        <td style="text-align:center; padding:0.5rem 0;">1.00</td>
+                        <td style="text-align:right; padding:0.5rem 0;">₹\${amount}</td>
+                        <td style="text-align:right; padding:0.5rem 0;">₹\${amount}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div style="border-top:1px solid #cbd5e1; padding-top:0.75rem; text-align:right; font-size:0.75rem; font-weight:700;">
+                TOTAL AMOUNT: ₹\${amount}
+            </div>
+            <div style="margin-top:2rem; font-size:0.65rem; border-top:1px dashed #cbd5e1; padding-top:0.5rem; color:#64748b;">
+                Thank you for your business. For bank transfers, credit Sajjad, Shrinidhi or Anish.
+            </div>
+        `;
+        
+        // Scroll to the print preview
+        container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // Convert Quotation simulator
+    function convertMockQuote(qNo, client, amt) {
+        const toast = document.getElementById('mock-quote-toast');
+        toast.style.display = 'block';
+        toast.innerHTML = `<i class="fas fa-check-circle"></i> Quotation <strong>\${qNo}</strong> for \${client} converted successfully! Invoices database refreshed. <strong>#INV-2026-004</strong> created.`;
+        
+        const btn = document.getElementById('btn-convert-mock-quote');
+        btn.innerHTML = `<i class="fas fa-check"></i> Invoiced`;
+        btn.disabled = true;
+        btn.style.opacity = '0.6';
+    }
+
+    // WhatsApp Reminder simulator
+    function triggerMockWhatsApp(client, serviceName, expiryDate) {
+        const toast = document.getElementById('mock-wa-toast');
+        toast.style.display = 'block';
+        toast.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #a5d6a7; padding-bottom:0.5rem; margin-bottom:0.5rem;">
+                <strong style="color:#25d366;"><i class="fab fa-whatsapp"></i> WhatsApp Dispatch Simulator (Active API)</strong>
+                <button onclick="document.getElementById('mock-wa-toast').style.display='none'" style="border:none; background:none; font-size:1.1rem; cursor:pointer;">&times;</button>
+            </div>
+            <p><strong>System constructs wa.me link:</strong> <code>https://wa.me/91987654321?text=...</code></p>
+            <p style="margin-top:0.5rem;"><strong>Predefined Message Dispatched to \${client}:</strong></p>
+            <div style="background:white; padding:0.5rem; border-radius:0.25rem; margin-top:0.25rem; font-style:italic;">
+                "Hello \${client}, your subscription for \${serviceName} is expiring on \${expiryDate}. Please renew to avoid service interruption. - Scalevyn.com"
+            </div>
+        `;
+        toast.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // Ticket Thread renderer
+    function renderMockTicketThread() {
+        const thread = document.getElementById('mock-ticket-chat-thread');
+        if (!thread) return;
+
+        thread.innerHTML = '';
+        mockTicketMessages.forEach(msg => {
+            const isStaff = msg.sender === 'Staff';
+            thread.innerHTML += `
+                <div class="mock-chat-msg \${isStaff ? 'staff' : 'client'}">
+                    <div class="mock-chat-meta">
+                        <strong>\${msg.author}</strong>
+                        <span>\${msg.time}</span>
+                    </div>
+                    <div>\${msg.message}</div>
+                </div>
+            `;
+        });
+
+        // Scroll to bottom of thread
+        thread.scrollTop = thread.scrollHeight;
+    }
+
+    // Send reply on support ticket mockup
+    function sendMockTicketReply() {
+        const input = document.getElementById('mock-ticket-reply-text');
+        if (!input || input.value.trim() === '') return;
+
+        const date = new Date();
+        const timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        // Add staff message
+        mockTicketMessages.push({
+            sender: 'Staff',
+            author: 'Sajjad (Partner)',
+            message: input.value,
+            time: timeStr
+        });
+
+        // Clear input
+        input.value = '';
+
+        // Re-render
+        renderMockTicketThread();
+    }
+</script>
+
+</body>
+</html>
