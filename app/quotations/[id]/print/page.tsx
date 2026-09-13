@@ -197,21 +197,45 @@ export default function PrintQuotationPage() {
             <div style={{ fontSize: '24px', fontWeight: 900, color: '#0f172a', letterSpacing: '0.05em', marginBottom: '12px' }}>
               QUOTATION
             </div>
-            <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '12px 16px', display: 'inline-block', minWidth: '260px', textAlign: 'left' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '13px' }}>
-                <span style={{ color: '#64748b', fontWeight: 600 }}>Quotation Number:</span>
-                <strong style={{ color: '#0f172a', fontWeight: 800 }}>#{quotation.quotation_number}</strong>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '13px' }}>
-                <span style={{ color: '#64748b', fontWeight: 600 }}>Quotation Date:</span>
-                <strong style={{ color: '#0f172a', fontWeight: 700 }}>{formatDate(quotation.quotation_date)}</strong>
-              </div>
-              {quotation.expiry_date && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px' }}>
-                  <span style={{ color: '#64748b', fontWeight: 600 }}>Valid Until:</span>
-                  <strong style={{ color: '#047857', fontWeight: 700 }}>{formatDate(quotation.expiry_date)}</strong>
-                </div>
-              )}
+            <div style={{
+              display: 'inline-block',
+              width: '290px',
+              backgroundColor: '#f8fafc',
+              border: '1px solid #e2e8f0',
+              borderRadius: '8px',
+              padding: '12px 16px',
+              textAlign: 'left'
+            }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', border: 'none', background: 'transparent' }}>
+                <tbody>
+                  <tr style={{ background: 'transparent', border: 'none' }}>
+                    <td style={{ padding: '4px 0', fontSize: '13px', color: '#475569', fontWeight: 600, border: 'none', background: 'transparent', textAlign: 'left', whiteSpace: 'nowrap' }}>
+                      Quotation Number:
+                    </td>
+                    <td style={{ padding: '4px 0', fontSize: '13px', color: '#0f172a', fontWeight: 800, textAlign: 'right', border: 'none', background: 'transparent', whiteSpace: 'nowrap' }}>
+                      #{quotation.quotation_number}
+                    </td>
+                  </tr>
+                  <tr style={{ background: 'transparent', border: 'none' }}>
+                    <td style={{ padding: '4px 0', fontSize: '13px', color: '#475569', fontWeight: 600, border: 'none', background: 'transparent', textAlign: 'left', whiteSpace: 'nowrap' }}>
+                      Quotation Date:
+                    </td>
+                    <td style={{ padding: '4px 0', fontSize: '13px', color: '#0f172a', fontWeight: 700, textAlign: 'right', border: 'none', background: 'transparent', whiteSpace: 'nowrap' }}>
+                      {formatDate(quotation.quotation_date)}
+                    </td>
+                  </tr>
+                  {quotation.expiry_date && (
+                    <tr style={{ background: 'transparent', border: 'none' }}>
+                      <td style={{ padding: '4px 0', fontSize: '13px', color: '#475569', fontWeight: 600, border: 'none', background: 'transparent', textAlign: 'left', whiteSpace: 'nowrap' }}>
+                        Valid Until:
+                      </td>
+                      <td style={{ padding: '4px 0', fontSize: '13px', color: '#047857', fontWeight: 800, textAlign: 'right', border: 'none', background: 'transparent', whiteSpace: 'nowrap' }}>
+                        {formatDate(quotation.expiry_date)}
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
