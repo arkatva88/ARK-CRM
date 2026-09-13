@@ -46,10 +46,10 @@ export default function PrintReceiptPage() {
     const html2pdf = (window as any).html2pdf;
     if (element && html2pdf) {
       const opt = {
-        margin: 10,
+        margin: [10, 10, 10, 10],
         filename: `Receipt_${receipt?.receipt_number || 'voucher'}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
+        html2canvas: { scale: 2, useCORS: true, letterRendering: true },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
       };
       html2pdf().from(element).set(opt).save();
@@ -59,37 +59,45 @@ export default function PrintReceiptPage() {
   };
 
   if (loading) {
-    return <div style={{ padding: '3rem', textAlign: 'center' }}>Loading receipt...</div>;
+    return (
+      <div style={{ padding: '3rem', textAlign: 'center', color: '#0f172a', background: '#f8fafc', minHeight: '100vh' }}>
+        Loading receipt...
+      </div>
+    );
   }
 
   if (!receipt) {
-    return <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--danger)' }}>Receipt not found.</div>;
+    return (
+      <div style={{ padding: '3rem', textAlign: 'center', color: '#ef4444', background: '#f8fafc', minHeight: '100vh' }}>
+        Receipt not found.
+      </div>
+    );
   }
 
   return (
-    <div style={{ background: '#f8fafc', minHeight: '100vh', padding: '30px 15px' }}>
+    <div style={{ background: '#f1f5f9', minHeight: '100vh', padding: '30px 15px', color: '#0f172a' }}>
       {/* Action Buttons */}
       <div
         className="no-print"
         style={{
-          maxWidth: '720px',
+          maxWidth: '740px',
           margin: '0 auto 20px auto',
           display: 'flex',
           justifyContent: 'flex-end',
-          gap: '10px',
+          gap: '12px',
         }}
       >
         <button
           onClick={downloadPDF}
           className="btn btn-primary"
-          style={{ background: '#059669', color: 'white', padding: '8px 18px' }}
+          style={{ background: '#059669', color: '#ffffff', padding: '9px 20px', fontWeight: 600, borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '8px' }}
         >
           <Download size={16} /> Download PDF
         </button>
         <button
           onClick={() => window.print()}
           className="btn btn-secondary"
-          style={{ background: '#2563eb', color: 'white', padding: '8px 18px' }}
+          style={{ background: '#0f172a', color: '#ffffff', padding: '9px 20px', fontWeight: 600, borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '8px' }}
         >
           <Printer size={16} /> Print Receipt
         </button>
@@ -99,55 +107,57 @@ export default function PrintReceiptPage() {
       <div
         id="receipt-print-box"
         style={{
-          maxWidth: '720px',
+          maxWidth: '740px',
           margin: 'auto',
-          background: 'white',
-          padding: '45px',
+          background: '#ffffff',
+          color: '#0f172a',
+          padding: '48px',
           borderRadius: '8px',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.05)',
-          borderTop: '8px solid #059669',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
+          borderTop: '6px solid #047857',
           border: '1px solid #e2e8f0',
+          fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
         }}
       >
         {/* Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '35px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px', borderBottom: '2px solid #e2e8f0', paddingBottom: '24px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             <img
-              src="/assets/ark-logo.jpeg"
+              src="/assets/ark-symbol-dark.png"
               alt="Arkatva Logo"
-              style={{ height: '48px', width: '48px', objectFit: 'cover', borderRadius: '8px', display: 'block' }}
+              style={{ height: '52px', width: 'auto', display: 'block', objectFit: 'contain' }}
               onError={(e) => {
-                (e.target as HTMLElement).style.display = 'none';
+                (e.target as HTMLImageElement).src = '/assets/ark-logo.jpeg';
               }}
             />
             <div>
-              <div style={{ fontSize: '24px', fontWeight: 800, color: '#09090b', letterSpacing: '0.04em' }}>
+              <div style={{ fontSize: '26px', fontWeight: 900, color: '#09090b', letterSpacing: '0.04em', lineHeight: '1.1' }}>
                 ARKATVA
               </div>
-              <div style={{ fontSize: '11px', color: '#64748b', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+              <div style={{ fontSize: '11px', color: '#475569', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', marginTop: '4px' }}>
                 Official Financial Receipt
               </div>
             </div>
           </div>
           <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: '26px', fontWeight: 800, color: '#09090b', textTransform: 'uppercase', letterSpacing: '2px' }}>
-              Receipt
+            <div style={{ fontSize: '26px', fontWeight: 900, color: '#0f172a', textTransform: 'uppercase', letterSpacing: '1px' }}>
+              RECEIPT
             </div>
-            <div style={{ fontSize: '13px', color: '#64748b', marginTop: '4px' }}>
-              Official Payment Voucher
+            <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 600, marginTop: '2px' }}>
+              Payment Voucher
             </div>
           </div>
         </div>
 
         {/* Metadata */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '30px', paddingBottom: '15px', borderBottom: '1px solid #f1f5f9' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '28px', paddingBottom: '16px', borderBottom: '1px solid #e2e8f0' }}>
           <div>
-            <span style={{ color: '#64748b', fontSize: '13px' }}>Receipt Number:</span>
-            <div style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a' }}>#{receipt.receipt_number}</div>
+            <span style={{ color: '#64748b', fontSize: '12px', textTransform: 'uppercase', fontWeight: 700 }}>Receipt Number:</span>
+            <div style={{ fontSize: '18px', fontWeight: 800, color: '#0f172a', marginTop: '2px' }}>#{receipt.receipt_number}</div>
           </div>
           <div style={{ textAlign: 'right' }}>
-            <span style={{ color: '#64748b', fontSize: '13px' }}>Date Received:</span>
-            <div style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a' }}>{formatDate(receipt.received_date)}</div>
+            <span style={{ color: '#64748b', fontSize: '12px', textTransform: 'uppercase', fontWeight: 700 }}>Date Received:</span>
+            <div style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a', marginTop: '2px' }}>{formatDate(receipt.received_date)}</div>
           </div>
         </div>
 
@@ -157,57 +167,62 @@ export default function PrintReceiptPage() {
             background: '#f0fdf4',
             padding: '24px',
             borderRadius: '8px',
-            border: '1px solid #dcfce7',
-            marginBottom: '35px',
+            border: '1px solid #bbf7d0',
+            marginBottom: '32px',
             textAlign: 'center',
           }}
         >
-          <div style={{ fontSize: '13px', color: '#64748b', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '1px', marginBottom: '6px' }}>
+          <div style={{ fontSize: '12px', color: '#065f46', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '1px', marginBottom: '6px' }}>
             Amount Received
           </div>
-          <div style={{ fontSize: '34px', fontWeight: 800, color: '#059669' }}>
+          <div style={{ fontSize: '36px', fontWeight: 900, color: '#047857' }}>
             {formatCurrency(receipt.amount)}
           </div>
         </div>
 
         {/* Payment Details */}
-        <div style={{ fontSize: '16px', lineHeight: '2', color: '#334155', marginBottom: '40px' }}>
-          <p>
-            Received with thanks from: <strong style={{ color: '#0f172a' }}>{receipt.clients?.name || 'Customer'}</strong>
+        <div style={{ fontSize: '15px', lineHeight: '2.1', color: '#1e293b', marginBottom: '36px' }}>
+          <p style={{ margin: 0 }}>
+            Received with thanks from:{' '}
+            <strong style={{ color: '#0f172a', fontSize: '16px', fontWeight: 800 }}>
+              {receipt.clients?.name || 'Customer'}
+            </strong>
           </p>
-          <p>
-            The sum of: <strong style={{ color: '#059669' }}>{formatCurrency(receipt.amount)}</strong>
+          <p style={{ margin: 0 }}>
+            The sum of:{' '}
+            <strong style={{ color: '#047857', fontSize: '16px', fontWeight: 800 }}>
+              {formatCurrency(receipt.amount)}
+            </strong>
           </p>
-          <p>
-            Payment Method: <strong style={{ color: '#0f172a' }}>{receipt.payment_method || 'UPI / Bank'}</strong>
+          <p style={{ margin: 0 }}>
+            Payment Method:{' '}
+            <strong style={{ color: '#0f172a', fontWeight: 700 }}>
+              {receipt.payment_method || 'UPI / Direct Bank Transfer'}
+            </strong>
           </p>
-          {receipt.credited_to_account && (
-            <p>
-              Credited to Account: <strong style={{ color: '#0f172a' }}>{receipt.credited_to_account}</strong>
-            </p>
-          )}
           {receipt.description && (
-            <p>
-              For / Remarks: <em style={{ color: '#475569' }}>{receipt.description}</em>
+            <p style={{ margin: 0 }}>
+              Towards / Remarks:{' '}
+              <span style={{ color: '#334155', fontWeight: 500 }}>{receipt.description}</span>
             </p>
           )}
         </div>
 
         {/* Signature Stamp */}
-        <div style={{ marginTop: '50px', display: 'flex', justifyContent: 'flex-end' }}>
+        <div style={{ marginTop: '45px', display: 'flex', justifyContent: 'flex-end' }}>
           <div style={{ textAlign: 'center', minWidth: '180px' }}>
-            <div style={{ height: '45px', borderBottom: '1px solid #cbd5e1', marginBottom: '8px' }}></div>
-            <p style={{ margin: 0, fontSize: '12px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            <div style={{ height: '40px', borderBottom: '1px solid #94a3b8', marginBottom: '8px' }}></div>
+            <p style={{ margin: 0, fontSize: '11px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 700 }}>
               Authorized Signature
             </p>
-            <p style={{ margin: 0, fontWeight: 700, color: '#09090b', fontSize: '14px' }}>Arkatva</p>
+            <p style={{ margin: '2px 0 0 0', fontWeight: 800, color: '#0f172a', fontSize: '14px' }}>Arkatva</p>
           </div>
         </div>
 
         {/* Footer */}
         <div
           style={{
-            marginTop: '55px',
+            marginTop: '45px',
             fontSize: '12px',
             color: '#64748b',
             textAlign: 'center',
@@ -216,10 +231,10 @@ export default function PrintReceiptPage() {
             lineHeight: '1.6',
           }}
         >
-          <p style={{ margin: 0 }}>Kelrai, Church Rd, Mangaluru, Karnataka 575029</p>
-          <p style={{ margin: 0 }}>contact@arkatva.com | +91 8075 203 446</p>
-          <p style={{ margin: 0, fontSize: '11px', color: '#94a3b8', marginTop: '4px' }}>
-            This is an electronically generated official receipt.
+          <p style={{ margin: 0, fontWeight: 600, color: '#334155' }}>Kelrai, Church Rd, Mangaluru, Karnataka 575029</p>
+          <p style={{ margin: 0, color: '#64748b' }}>contact@arkatva.com | +91 8075 203 446 | www.arkatva.com</p>
+          <p style={{ margin: '4px 0 0 0', fontSize: '11px', color: '#94a3b8' }}>
+            This is an electronically generated official receipt issued by Arkatva.
           </p>
         </div>
       </div>

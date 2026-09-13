@@ -29,7 +29,10 @@ export default function PrintInvoicePage() {
 
     if (inv) {
       setInvoice(inv);
-      const { data: itms } = await supabase.from('invoice_items').select('*').eq('invoice_id', id);
+      const { data: itms } = await supabase
+        .from('invoice_items')
+        .select('*')
+        .eq('invoice_id', id);
       if (itms) setItems(itms);
     }
     setLoading(false);
@@ -49,10 +52,10 @@ export default function PrintInvoicePage() {
     const html2pdf = (window as any).html2pdf;
     if (element && html2pdf) {
       const opt = {
-        margin: 10,
+        margin: [10, 10, 10, 10],
         filename: `Invoice_${invoice?.invoice_number || 'document'}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
+        html2canvas: { scale: 2, useCORS: true, letterRendering: true },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
       };
       html2pdf().from(element).set(opt).save();
@@ -61,186 +64,214 @@ export default function PrintInvoicePage() {
     }
   };
 
-  if (loading) return <div style={{ padding: '3rem', textAlign: 'center' }}>Loading invoice...</div>;
-  if (!invoice) return <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--danger)' }}>Invoice not found.</div>;
+  if (loading) {
+    return (
+      <div style={{ padding: '3rem', textAlign: 'center', color: '#0f172a', background: '#f8fafc', minHeight: '100vh' }}>
+        Loading invoice...
+      </div>
+    );
+  }
+
+  if (!invoice) {
+    return (
+      <div style={{ padding: '3rem', textAlign: 'center', color: '#ef4444', background: '#f8fafc', minHeight: '100vh' }}>
+        Invoice not found.
+      </div>
+    );
+  }
 
   const advance = invoice.is_advance_paid ? Number(invoice.advance_amount || 0) : 0;
   const balanceDue = Math.max(0, Number(invoice.total_amount || 0) - advance);
+  const isPaid = invoice.status?.toLowerCase() === 'paid' || balanceDue === 0;
 
   return (
-    <div style={{ background: '#f8fafc', minHeight: '100vh', padding: '30px 15px' }}>
+    <div style={{ background: '#f1f5f9', minHeight: '100vh', padding: '30px 15px', color: '#0f172a' }}>
       {/* Controls */}
       <div
         className="no-print"
         style={{
-          maxWidth: '820px',
+          maxWidth: '840px',
           margin: '0 auto 20px auto',
           display: 'flex',
           justifyContent: 'flex-end',
-          gap: '10px',
+          gap: '12px',
         }}
       >
         <button
           onClick={downloadPDF}
           className="btn btn-primary"
-          style={{ background: '#059669', color: 'white', padding: '8px 18px' }}
+          style={{ background: '#059669', color: '#ffffff', padding: '9px 20px', fontWeight: 600, borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '8px' }}
         >
           <Download size={16} /> Download PDF
         </button>
         <button
           onClick={() => window.print()}
           className="btn btn-secondary"
-          style={{ background: '#2563eb', color: 'white', padding: '8px 18px' }}
+          style={{ background: '#0f172a', color: '#ffffff', padding: '9px 20px', fontWeight: 600, borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '8px' }}
         >
           <Printer size={16} /> Print Invoice
         </button>
       </div>
 
-      {/* Invoice Document */}
+      {/* Invoice Document Box */}
       <div
         id="invoice-print-box"
         style={{
-          maxWidth: '820px',
+          maxWidth: '840px',
           margin: 'auto',
-          background: 'white',
-          padding: '45px',
+          background: '#ffffff',
+          color: '#0f172a',
+          padding: '48px',
           borderRadius: '8px',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.05)',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
           border: '1px solid #e2e8f0',
+          fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
         }}
       >
-        {/* Header */}
+        {/* Header: Brand & Contacts */}
         <div
           style={{
             display: 'flex',
             justifyContent: 'space-between',
-            alignItems: 'flex-start',
-            marginBottom: '40px',
-            borderBottom: '2px solid #f1f5f9',
-            paddingBottom: '25px',
+            alignItems: 'center',
+            marginBottom: '36px',
+            borderBottom: '2px solid #e2e8f0',
+            paddingBottom: '26px',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             <img
-              src="/assets/ark-logo.jpeg"
+              src="/assets/ark-symbol-dark.png"
               alt="Arkatva Logo"
-              style={{ height: '48px', width: '48px', objectFit: 'cover', borderRadius: '8px', display: 'block' }}
+              style={{ height: '52px', width: 'auto', display: 'block', objectFit: 'contain' }}
               onError={(e) => {
-                (e.target as HTMLElement).style.display = 'none';
+                (e.target as HTMLImageElement).src = '/assets/ark-logo.jpeg';
               }}
             />
             <div>
-              <div style={{ fontSize: '24px', fontWeight: 800, color: '#09090b', letterSpacing: '0.04em' }}>
+              <div style={{ fontSize: '26px', fontWeight: 900, color: '#09090b', letterSpacing: '0.04em', lineHeight: '1.1' }}>
                 ARKATVA
               </div>
-              <div style={{ fontSize: '11px', color: '#64748b', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+              <div style={{ fontSize: '11px', color: '#475569', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', marginTop: '4px' }}>
                 Technology & Digital Solutions
               </div>
             </div>
           </div>
-          <div style={{ textAlign: 'right', fontSize: '13px', color: '#64748b', lineHeight: '1.6' }}>
-            <p style={{ margin: 0, fontWeight: 700, color: '#0f172a', fontSize: '15px' }}>Arkatva</p>
-            <p style={{ margin: 0 }}>Kelrai, Church Rd, Mangaluru</p>
-            <p style={{ margin: 0 }}>Karnataka 575029</p>
-            <p style={{ margin: 0 }}>Phone: +91 8075 203 446 | +91 6364749168</p>
-            <p style={{ margin: 0 }}>Email: contact@arkatva.com</p>
+          <div style={{ textAlign: 'right', fontSize: '13px', color: '#334155', lineHeight: '1.6' }}>
+            <p style={{ margin: 0, fontWeight: 700, color: '#0f172a', fontSize: '14px' }}>Arkatva Tech Solutions</p>
+            <p style={{ margin: 0, color: '#475569' }}>Kelrai, Church Rd, Mangaluru, KA 575029</p>
+            <p style={{ margin: 0, color: '#475569' }}>Phone: +91 8075 203 446 | +91 6364749168</p>
+            <p style={{ margin: 0, color: '#475569' }}>Email: contact@arkatva.com</p>
           </div>
         </div>
 
-        {/* Details */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '35px', gap: '20px' }}>
-          <div style={{ width: '50%' }}>
-            <h3 style={{ fontSize: '13px', color: '#94a3b8', textTransform: 'uppercase', marginBottom: '8px', fontWeight: 600 }}>
+        {/* Details: Bill To & Invoice Info */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '36px', gap: '24px' }}>
+          {/* Bill To */}
+          <div style={{ width: '52%' }}>
+            <div style={{ fontSize: '12px', color: '#64748b', textTransform: 'uppercase', marginBottom: '8px', fontWeight: 700, letterSpacing: '0.05em' }}>
               Bill To:
-            </h3>
-            <p style={{ fontSize: '16px', fontWeight: 700, margin: '0 0 4px 0', color: '#0f172a' }}>
-              {invoice.clients?.name}
-            </p>
+            </div>
+            <div style={{ fontSize: '18px', fontWeight: 800, margin: '0 0 6px 0', color: '#0f172a' }}>
+              {invoice.clients?.name || 'Customer'}
+            </div>
             {invoice.clients?.address && (
-              <p style={{ margin: '0 0 4px 0', color: '#475569', fontSize: '14px', whiteSpace: 'pre-line' }}>
+              <div style={{ margin: '0 0 6px 0', color: '#334155', fontSize: '14px', lineHeight: '1.5', whiteSpace: 'pre-line' }}>
                 {invoice.clients.address}
-              </p>
+              </div>
             )}
             {invoice.clients?.phone && (
-              <p style={{ margin: '0 0 4px 0', color: '#475569', fontSize: '14px' }}>
-                <strong>Phone:</strong> {invoice.clients.phone}
-              </p>
+              <div style={{ margin: '0 0 4px 0', color: '#334155', fontSize: '14px' }}>
+                <span style={{ fontWeight: 600, color: '#475569' }}>Phone:</span> {invoice.clients.phone}
+              </div>
             )}
             {invoice.clients?.email && (
-              <p style={{ margin: '0 0 4px 0', color: '#475569', fontSize: '14px' }}>
-                <strong>Email 1:</strong> {invoice.clients.email}
-              </p>
-            )}
-            {invoice.clients?.email2 && (
-              <p style={{ margin: 0, color: '#475569', fontSize: '14px' }}>
-                <strong>Email 2:</strong> {invoice.clients.email2}
-              </p>
+              <div style={{ margin: 0, color: '#334155', fontSize: '14px' }}>
+                <span style={{ fontWeight: 600, color: '#475569' }}>Email:</span> {invoice.clients.email}
+                {invoice.clients?.email2 && <span> / {invoice.clients.email2}</span>}
+              </div>
             )}
           </div>
 
-          <div style={{ width: '50%', textAlign: 'right' }}>
-            <p style={{ margin: '0 0 6px 0', fontSize: '14px' }}>
-              Invoice Number: <strong style={{ fontSize: '16px', color: '#0f172a' }}>#{invoice.invoice_number}</strong>
-            </p>
-            <p style={{ margin: '0 0 6px 0', fontSize: '14px' }}>
-              Invoice Date: <strong>{formatDate(invoice.invoice_date)}</strong>
-            </p>
-            <p style={{ margin: 0, fontSize: '14px' }}>
-              Status:{' '}
-              <span
-                style={{
-                  textTransform: 'uppercase',
-                  fontWeight: 700,
-                  color: invoice.status === 'paid' ? '#059669' : '#ef4444',
-                }}
-              >
-                {invoice.status}
-              </span>
-            </p>
+          {/* Invoice Summary Box */}
+          <div style={{ width: '45%', textAlign: 'right' }}>
+            <div style={{ fontSize: '24px', fontWeight: 900, color: '#0f172a', letterSpacing: '0.05em', marginBottom: '12px' }}>
+              TAX INVOICE
+            </div>
+            <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '12px 16px', display: 'inline-block', minWidth: '260px', textAlign: 'left' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '13px' }}>
+                <span style={{ color: '#64748b', fontWeight: 600 }}>Invoice Number:</span>
+                <strong style={{ color: '#0f172a', fontWeight: 800 }}>#{invoice.invoice_number}</strong>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '13px' }}>
+                <span style={{ color: '#64748b', fontWeight: 600 }}>Invoice Date:</span>
+                <strong style={{ color: '#0f172a', fontWeight: 700 }}>{formatDate(invoice.invoice_date)}</strong>
+              </div>
+              {invoice.due_date && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '13px' }}>
+                  <span style={{ color: '#64748b', fontWeight: 600 }}>Due Date:</span>
+                  <strong style={{ color: '#0f172a', fontWeight: 700 }}>{formatDate(invoice.due_date)}</strong>
+                </div>
+              )}
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', borderTop: '1px solid #e2e8f0', paddingTop: '6px', marginTop: '4px' }}>
+                <span style={{ color: '#64748b', fontWeight: 600 }}>Payment Status:</span>
+                <strong style={{ color: isPaid ? '#047857' : '#b91c1c', fontWeight: 800, textTransform: 'uppercase' }}>
+                  {isPaid ? 'PAID' : 'PAYMENT DUE'}
+                </strong>
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Line Items Table */}
-        <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '30px' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '32px', color: '#0f172a' }}>
           <thead>
-            <tr style={{ background: '#f8fafc' }}>
-              <th style={{ padding: '12px 14px', textAlign: 'left', borderBottom: '2px solid #e2e8f0', fontSize: '12px', textTransform: 'uppercase', color: '#64748b' }}>
+            <tr style={{ background: '#f8fafc', borderTop: '2px solid #0f172a', borderBottom: '2px solid #0f172a' }}>
+              <th style={{ padding: '14px 16px', textAlign: 'left', fontSize: '12px', textTransform: 'uppercase', color: '#0f172a', fontWeight: 800, letterSpacing: '0.04em' }}>
                 Description
               </th>
-              <th style={{ padding: '12px 14px', textAlign: 'center', borderBottom: '2px solid #e2e8f0', fontSize: '12px', textTransform: 'uppercase', color: '#64748b', width: '80px' }}>
+              <th style={{ padding: '14px 16px', textAlign: 'center', fontSize: '12px', textTransform: 'uppercase', color: '#0f172a', fontWeight: 800, width: '80px', letterSpacing: '0.04em' }}>
                 Qty
               </th>
-              <th style={{ padding: '12px 14px', textAlign: 'right', borderBottom: '2px solid #e2e8f0', fontSize: '12px', textTransform: 'uppercase', color: '#64748b', width: '130px' }}>
+              <th style={{ padding: '14px 16px', textAlign: 'right', fontSize: '12px', textTransform: 'uppercase', color: '#0f172a', fontWeight: 800, width: '140px', letterSpacing: '0.04em' }}>
                 Unit Price
               </th>
-              <th style={{ padding: '12px 14px', textAlign: 'right', borderBottom: '2px solid #e2e8f0', fontSize: '12px', textTransform: 'uppercase', color: '#64748b', width: '130px' }}>
+              <th style={{ padding: '14px 16px', textAlign: 'right', fontSize: '12px', textTransform: 'uppercase', color: '#0f172a', fontWeight: 800, width: '140px', letterSpacing: '0.04em' }}>
                 Total
               </th>
             </tr>
           </thead>
           <tbody>
             {items.map((item, i) => (
-              <tr key={i} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                <td style={{ padding: '12px 14px', fontSize: '14px', color: '#1e293b' }}>{item.description}</td>
-                <td style={{ padding: '12px 14px', textAlign: 'center', fontSize: '14px' }}>{item.quantity}</td>
-                <td style={{ padding: '12px 14px', textAlign: 'right', fontSize: '14px' }}>{formatCurrency(item.unit_price)}</td>
-                <td style={{ padding: '12px 14px', textAlign: 'right', fontSize: '14px', fontWeight: 600 }}>{formatCurrency(item.total)}</td>
+              <tr key={i} style={{ borderBottom: '1px solid #e2e8f0', background: i % 2 === 1 ? '#fafafa' : '#ffffff' }}>
+                <td style={{ padding: '14px 16px', fontSize: '14px', color: '#0f172a', fontWeight: 500 }}>
+                  {item.description}
+                </td>
+                <td style={{ padding: '14px 16px', textAlign: 'center', fontSize: '14px', color: '#0f172a', fontWeight: 600 }}>
+                  {item.quantity}
+                </td>
+                <td style={{ padding: '14px 16px', textAlign: 'right', fontSize: '14px', color: '#0f172a', fontWeight: 500 }}>
+                  {formatCurrency(item.unit_price)}
+                </td>
+                <td style={{ padding: '14px 16px', textAlign: 'right', fontSize: '14px', color: '#0f172a', fontWeight: 700 }}>
+                  {formatCurrency(item.total)}
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
 
         {/* Totals Section */}
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '40px' }}>
-          <div style={{ width: '300px', borderTop: '2px solid #e2e8f0', paddingTop: '15px' }}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '36px' }}>
+          <div style={{ width: '320px', borderTop: '2px solid #0f172a', paddingTop: '14px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '14px' }}>
-              <span style={{ color: '#64748b' }}>Total Amount:</span>
-              <span style={{ fontWeight: 600 }}>{formatCurrency(invoice.total_amount)}</span>
+              <span style={{ color: '#475569', fontWeight: 600 }}>Total Amount:</span>
+              <span style={{ fontWeight: 700, color: '#0f172a' }}>{formatCurrency(invoice.total_amount)}</span>
             </div>
             {invoice.is_advance_paid && advance > 0 && (
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '14px', color: '#16a34a' }}>
-                <span>Advance Paid:</span>
-                <span>-{formatCurrency(advance)}</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '14px', color: '#047857' }}>
+                <span style={{ fontWeight: 600 }}>Advance Paid:</span>
+                <span style={{ fontWeight: 700 }}>-{formatCurrency(advance)}</span>
               </div>
             )}
             <div
@@ -248,44 +279,48 @@ export default function PrintInvoicePage() {
                 display: 'flex',
                 justifyContent: 'space-between',
                 fontSize: '20px',
-                fontWeight: 800,
-                color: '#059669',
-                borderTop: '1px solid #e2e8f0',
+                fontWeight: 900,
+                color: balanceDue > 0 ? '#0f172a' : '#047857',
+                borderTop: '1px solid #cbd5e1',
                 paddingTop: '10px',
                 marginTop: '6px',
               }}
             >
               <span>Balance Due:</span>
-              <span>{formatCurrency(balanceDue)}</span>
+              <span style={{ color: balanceDue > 0 ? '#b91c1c' : '#047857' }}>{formatCurrency(balanceDue)}</span>
             </div>
           </div>
         </div>
 
-        {/* Notes / Bank details */}
+        {/* Notes & Bank Details */}
         {invoice.notes && (
-          <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '6px', marginBottom: '40px', border: '1px solid #e2e8f0' }}>
-            <div style={{ fontSize: '12px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase', marginBottom: '4px' }}>
+          <div style={{ background: '#f8fafc', padding: '18px', borderRadius: '6px', marginBottom: '36px', border: '1px solid #e2e8f0' }}>
+            <div style={{ fontSize: '12px', fontWeight: 700, color: '#475569', textTransform: 'uppercase', marginBottom: '6px', letterSpacing: '0.04em' }}>
               Payment Instructions / Bank Details:
             </div>
-            <div style={{ fontSize: '13px', color: '#334155', whiteSpace: 'pre-line' }}>{invoice.notes}</div>
+            <div style={{ fontSize: '13px', color: '#334155', lineHeight: '1.6', whiteSpace: 'pre-line' }}>
+              {invoice.notes}
+            </div>
           </div>
         )}
 
         {/* Footer */}
         <div
           style={{
-            marginTop: '50px',
+            marginTop: '45px',
             fontSize: '12px',
-            color: '#94a3b8',
+            color: '#64748b',
             textAlign: 'center',
             borderTop: '1px solid #e2e8f0',
             paddingTop: '20px',
+            lineHeight: '1.6',
           }}
         >
-          <p style={{ margin: 0 }}>Kelrai, Church Rd, Mangaluru, Karnataka 575029</p>
-          <p style={{ margin: '4px 0 0 0' }}>contact@arkatva.com | +91 8075 203 446</p>
-          <p style={{ margin: '4px 0 0 0', fontSize: '11px', color: '#cbd5e1' }}>
+          <p style={{ margin: 0, fontWeight: 600, color: '#334155' }}>
             Thank you for doing business with Arkatva.
+          </p>
+          <p style={{ margin: '4px 0 0 0', color: '#64748b' }}>
+            For payment inquiries, contact <strong>contact@arkatva.com</strong> or call <strong>+91 8075 203 446</strong>.
           </p>
         </div>
       </div>

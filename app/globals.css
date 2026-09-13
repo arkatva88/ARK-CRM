@@ -3,6 +3,7 @@
 :root {
   --primary: #ffffff;
   --primary-hover: #e4e4e7;
+  --primary-dark: #047857;
   --secondary: #27272a;
   --secondary-hover: #3f3f46;
   --accent: #f4f4f5;
@@ -714,3 +715,39 @@ select.form-control option {
     font-size: 0.825rem;
   }
 }
+
+/* Print Rules & Document Print Settings */
+.no-print {
+  display: flex;
+}
+
+@page {
+  margin: 12mm 10mm;
+  size: A4 portrait;
+}
+
+@media print {
+  html, body {
+    background: #ffffff !important;
+    background-image: none !important;
+    color: #0f172a !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  #quotation-print-box,
+  #invoice-print-box,
+  #receipt-print-box {
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+

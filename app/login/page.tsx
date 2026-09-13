@@ -84,11 +84,11 @@ export default function LoginPage() {
             }}
           >
             <img
-              src="/assets/ark-logo.jpeg"
+              src="/assets/ark-symbol-white.png"
               alt="Arkatva Crystal Emblem"
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              style={{ width: '85%', height: '85%', objectFit: 'contain' }}
               onError={(e) => {
-                (e.target as HTMLImageElement).src = '/assets/logo.png';
+                (e.target as HTMLImageElement).src = '/assets/ark-logo.jpeg';
               }}
             />
           </div>

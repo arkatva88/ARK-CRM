@@ -70,11 +70,12 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         <div className="sidebar-brand">
           <Link href="/" className="brand-wrapper" onClick={onClose}>
             <img
-              src="/assets/ark-logo.jpeg"
+              src="/assets/ark-symbol-white.png"
               alt="Arkatva Logo"
               className="brand-logo-img"
+              style={{ objectFit: 'contain', padding: '2px' }}
               onError={(e) => {
-                (e.target as HTMLImageElement).src = '/assets/logo.png';
+                (e.target as HTMLImageElement).src = '/assets/ark-logo.jpeg';
               }}
             />
             <div className="brand-text">

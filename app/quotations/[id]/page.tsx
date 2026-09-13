@@ -60,7 +60,12 @@ export default function ViewQuotationPage() {
 
       <div className="grid-2">
         <div className="card" style={{ padding: '1.5rem' }}>
-          <h3 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '1rem' }}>Client Information</h3>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <h3 style={{ fontSize: '1rem', fontWeight: 600, margin: 0 }}>Client Information</h3>
+            <Link href="/clients" className="btn btn-secondary btn-sm" style={{ padding: '4px 8px', fontSize: '0.75rem' }}>
+              <Edit2 size={12} /> Edit Client
+            </Link>
+          </div>
           <p style={{ marginBottom: '0.5rem' }}><strong>Client Name:</strong> {quotation.clients?.name}</p>
           <p style={{ marginBottom: '0.5rem' }}><strong>Email:</strong> {quotation.clients?.email || 'N/A'}</p>
           <p style={{ marginBottom: '0.5rem' }}><strong>Phone:</strong> {quotation.clients?.phone || 'N/A'}</p>
