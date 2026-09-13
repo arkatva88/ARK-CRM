@@ -226,17 +226,17 @@ export default function PrintInvoicePage() {
         {/* Line Items Table */}
         <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '32px', color: '#0f172a' }}>
           <thead>
-            <tr style={{ background: '#f8fafc', borderTop: '2px solid #0f172a', borderBottom: '2px solid #0f172a' }}>
-              <th style={{ padding: '14px 16px', textAlign: 'left', fontSize: '12px', textTransform: 'uppercase', color: '#0f172a', fontWeight: 800, letterSpacing: '0.04em' }}>
+            <tr style={{ backgroundColor: '#f1f5f9', borderTop: '2px solid #0f172a', borderBottom: '2px solid #0f172a' }}>
+              <th style={{ backgroundColor: '#f1f5f9', padding: '14px 16px', textAlign: 'left', fontSize: '12px', textTransform: 'uppercase', color: '#0f172a', fontWeight: 800, letterSpacing: '0.04em', borderBottom: '2px solid #0f172a' }}>
                 Description
               </th>
-              <th style={{ padding: '14px 16px', textAlign: 'center', fontSize: '12px', textTransform: 'uppercase', color: '#0f172a', fontWeight: 800, width: '80px', letterSpacing: '0.04em' }}>
+              <th style={{ backgroundColor: '#f1f5f9', padding: '14px 16px', textAlign: 'center', fontSize: '12px', textTransform: 'uppercase', color: '#0f172a', fontWeight: 800, width: '80px', letterSpacing: '0.04em', borderBottom: '2px solid #0f172a' }}>
                 Qty
               </th>
-              <th style={{ padding: '14px 16px', textAlign: 'right', fontSize: '12px', textTransform: 'uppercase', color: '#0f172a', fontWeight: 800, width: '140px', letterSpacing: '0.04em' }}>
+              <th style={{ backgroundColor: '#f1f5f9', padding: '14px 16px', textAlign: 'right', fontSize: '12px', textTransform: 'uppercase', color: '#0f172a', fontWeight: 800, width: '140px', letterSpacing: '0.04em', borderBottom: '2px solid #0f172a' }}>
                 Unit Price
               </th>
-              <th style={{ padding: '14px 16px', textAlign: 'right', fontSize: '12px', textTransform: 'uppercase', color: '#0f172a', fontWeight: 800, width: '140px', letterSpacing: '0.04em' }}>
+              <th style={{ backgroundColor: '#f1f5f9', padding: '14px 16px', textAlign: 'right', fontSize: '12px', textTransform: 'uppercase', color: '#0f172a', fontWeight: 800, width: '140px', letterSpacing: '0.04em', borderBottom: '2px solid #0f172a' }}>
                 Total
               </th>
             </tr>

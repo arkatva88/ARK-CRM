@@ -745,9 +745,33 @@ select.form-control option {
     box-shadow: none !important;
     border: none !important;
     padding: 0 !important;
-    margin: 0 auto !important;
-    width: 100% !important;
     max-width: 100% !important;
   }
 }
+
+/* Document Print Box Overrides (Quotations, Invoices, Receipts) */
+#quotation-print-box th,
+#invoice-print-box th,
+#receipt-print-box th {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+  border-top: 2px solid #0f172a !important;
+  border-bottom: 2px solid #0f172a !important;
+}
+
+#quotation-print-box td,
+#invoice-print-box td,
+#receipt-print-box td {
+  background-color: transparent !important;
+  color: #0f172a !important;
+}
+
+#quotation-print-box tr:hover td,
+#invoice-print-box tr:hover td,
+#receipt-print-box tr:hover td {
+  background-color: inherit !important;
+  color: #0f172a !important;
+}
+
+
 
