@@ -193,58 +193,40 @@ export default function PrintInvoicePage() {
             )}
           </div>
 
-          {/* Invoice Summary Box */}
-          <div style={{ width: '45%', textAlign: 'right' }}>
-            <div style={{ fontSize: '24px', fontWeight: 900, color: '#0f172a', letterSpacing: '0.05em', marginBottom: '12px' }}>
+          {/* Invoice Summary */}
+          <div style={{ width: '48%', textAlign: 'right' }}>
+            <div style={{ fontSize: '28px', fontWeight: 900, color: '#0f172a', letterSpacing: '0.04em', lineHeight: '1.1', marginBottom: '8px' }}>
               TAX INVOICE
             </div>
-            <div style={{
-              display: 'inline-block',
-              width: '290px',
-              backgroundColor: '#f8fafc',
-              border: '1px solid #e2e8f0',
-              borderRadius: '8px',
-              padding: '12px 16px',
-              textAlign: 'left'
-            }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', border: 'none', background: 'transparent' }}>
-                <tbody>
-                  <tr style={{ background: 'transparent', border: 'none' }}>
-                    <td style={{ padding: '4px 0', fontSize: '13px', color: '#475569', fontWeight: 600, border: 'none', background: 'transparent', textAlign: 'left', whiteSpace: 'nowrap' }}>
-                      Invoice Number:
-                    </td>
-                    <td style={{ padding: '4px 0', fontSize: '13px', color: '#0f172a', fontWeight: 800, textAlign: 'right', border: 'none', background: 'transparent', whiteSpace: 'nowrap' }}>
-                      #{invoice.invoice_number}
-                    </td>
-                  </tr>
-                  <tr style={{ background: 'transparent', border: 'none' }}>
-                    <td style={{ padding: '4px 0', fontSize: '13px', color: '#475569', fontWeight: 600, border: 'none', background: 'transparent', textAlign: 'left', whiteSpace: 'nowrap' }}>
-                      Invoice Date:
-                    </td>
-                    <td style={{ padding: '4px 0', fontSize: '13px', color: '#0f172a', fontWeight: 700, textAlign: 'right', border: 'none', background: 'transparent', whiteSpace: 'nowrap' }}>
-                      {formatDate(invoice.invoice_date)}
-                    </td>
-                  </tr>
-                  {invoice.due_date && (
-                    <tr style={{ background: 'transparent', border: 'none' }}>
-                      <td style={{ padding: '4px 0', fontSize: '13px', color: '#475569', fontWeight: 600, border: 'none', background: 'transparent', textAlign: 'left', whiteSpace: 'nowrap' }}>
-                        Due Date:
-                      </td>
-                      <td style={{ padding: '4px 0', fontSize: '13px', color: '#0f172a', fontWeight: 700, textAlign: 'right', border: 'none', background: 'transparent', whiteSpace: 'nowrap' }}>
-                        {formatDate(invoice.due_date)}
-                      </td>
-                    </tr>
-                  )}
-                  <tr style={{ background: 'transparent', border: 'none' }}>
-                    <td style={{ padding: '6px 0 2px 0', fontSize: '13px', color: '#475569', fontWeight: 600, border: 'none', background: 'transparent', borderTop: '1px solid #e2e8f0', textAlign: 'left', whiteSpace: 'nowrap' }}>
-                      Payment Status:
-                    </td>
-                    <td style={{ padding: '6px 0 2px 0', fontSize: '13px', color: isPaid ? '#047857' : '#b91c1c', fontWeight: 800, textTransform: 'uppercase', border: 'none', background: 'transparent', borderTop: '1px solid #e2e8f0', textAlign: 'right', whiteSpace: 'nowrap' }}>
-                      {isPaid ? 'PAID' : 'PAYMENT DUE'}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+            <div style={{ fontSize: '16px', fontWeight: 800, color: '#0f172a', marginBottom: '8px' }}>
+              #{invoice.invoice_number}
+            </div>
+            <div style={{ fontSize: '13px', color: '#475569', marginBottom: '4px' }}>
+              <span style={{ fontWeight: 600 }}>Invoice Date:</span>{' '}
+              <strong style={{ color: '#0f172a' }}>{formatDate(invoice.invoice_date)}</strong>
+            </div>
+            {invoice.due_date && (
+              <div style={{ fontSize: '13px', color: '#475569', marginBottom: '4px' }}>
+                <span style={{ fontWeight: 600 }}>Due Date:</span>{' '}
+                <strong style={{ color: '#0f172a' }}>{formatDate(invoice.due_date)}</strong>
+              </div>
+            )}
+            <div style={{ fontSize: '13px', color: '#475569', marginTop: '6px' }}>
+              <span style={{ fontWeight: 600 }}>Payment Status:</span>{' '}
+              <span
+                style={{
+                  textTransform: 'uppercase',
+                  fontWeight: 800,
+                  fontSize: '11px',
+                  letterSpacing: '0.04em',
+                  padding: '2px 8px',
+                  borderRadius: '4px',
+                  background: isPaid ? '#dcfce7' : '#fee2e2',
+                  color: isPaid ? '#047857' : '#b91c1c',
+                }}
+              >
+                {isPaid ? 'PAID' : 'PAYMENT DUE'}
+              </span>
             </div>
           </div>
         </div>
