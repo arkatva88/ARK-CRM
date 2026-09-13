@@ -76,6 +76,33 @@ export default function PrintReceiptPage() {
 
   return (
     <div style={{ background: '#f1f5f9', minHeight: '100vh', padding: '30px 15px', color: '#0f172a' }}>
+      <style>{`
+        @page {
+          margin: 0;
+          size: auto;
+        }
+        @media print {
+          html, body {
+            background: #ffffff !important;
+            background-image: none !important;
+            color: #0f172a !important;
+            margin: 0 !important;
+            padding: 0 !important;
+          }
+          .no-print {
+            display: none !important;
+          }
+          #receipt-print-box {
+            box-shadow: none !important;
+            border: none !important;
+            padding: 16mm 14mm !important;
+            margin: 0 auto !important;
+            width: 100% !important;
+            max-width: 100% !important;
+          }
+        }
+      `}</style>
+
       {/* Action Buttons */}
       <div
         className="no-print"
@@ -232,7 +259,7 @@ export default function PrintReceiptPage() {
           }}
         >
           <p style={{ margin: 0, fontWeight: 600, color: '#334155' }}>Kelrai, Church Rd, Mangaluru, Karnataka 575029</p>
-          <p style={{ margin: 0, color: '#64748b' }}>contact@arkatva.com | +91 8075 203 446 | www.arkatva.com</p>
+          <p style={{ margin: 0, color: '#64748b' }}>arkatva.in@gmail.com | +91 82776 59388 | www.arkatva.in</p>
           <p style={{ margin: '4px 0 0 0', fontSize: '11px', color: '#94a3b8' }}>
             This is an electronically generated official receipt issued by Arkatva.
           </p>

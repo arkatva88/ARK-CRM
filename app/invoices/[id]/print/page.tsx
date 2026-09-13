@@ -86,6 +86,33 @@ export default function PrintInvoicePage() {
 
   return (
     <div style={{ background: '#f1f5f9', minHeight: '100vh', padding: '30px 15px', color: '#0f172a' }}>
+      <style>{`
+        @page {
+          margin: 0;
+          size: auto;
+        }
+        @media print {
+          html, body {
+            background: #ffffff !important;
+            background-image: none !important;
+            color: #0f172a !important;
+            margin: 0 !important;
+            padding: 0 !important;
+          }
+          .no-print {
+            display: none !important;
+          }
+          #invoice-print-box {
+            box-shadow: none !important;
+            border: none !important;
+            padding: 16mm 14mm !important;
+            margin: 0 auto !important;
+            width: 100% !important;
+            max-width: 100% !important;
+          }
+        }
+      `}</style>
+
       {/* Controls */}
       <div
         className="no-print"
@@ -160,8 +187,8 @@ export default function PrintInvoicePage() {
           <div style={{ textAlign: 'right', fontSize: '13px', color: '#334155', lineHeight: '1.6' }}>
             <p style={{ margin: 0, fontWeight: 700, color: '#0f172a', fontSize: '14px' }}>Arkatva Tech Solutions</p>
             <p style={{ margin: 0, color: '#475569' }}>Kelrai, Church Rd, Mangaluru, KA 575029</p>
-            <p style={{ margin: 0, color: '#475569' }}>Phone: +91 8075 203 446 | +91 6364749168</p>
-            <p style={{ margin: 0, color: '#475569' }}>Email: contact@arkatva.com</p>
+            <p style={{ margin: 0, color: '#475569' }}>Phone: +91 82776 59388</p>
+            <p style={{ margin: 0, color: '#475569' }}>Email: arkatva.in@gmail.com</p>
           </div>
         </div>
 
@@ -328,7 +355,7 @@ export default function PrintInvoicePage() {
             Thank you for doing business with Arkatva.
           </p>
           <p style={{ margin: '4px 0 0 0', color: '#64748b' }}>
-            For payment inquiries, contact <strong>contact@arkatva.com</strong> or call <strong>+91 8075 203 446</strong>.
+            For payment inquiries, contact <strong>arkatva.in@gmail.com</strong> or call <strong>+91 82776 59388</strong>.
           </p>
         </div>
       </div>

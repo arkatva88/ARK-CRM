@@ -722,8 +722,8 @@ select.form-control option {
 }
 
 @page {
-  margin: 12mm 10mm;
-  size: A4 portrait;
+  margin: 0;
+  size: auto;
 }
 
 @media print {
@@ -731,6 +731,8 @@ select.form-control option {
     background: #ffffff !important;
     background-image: none !important;
     color: #0f172a !important;
+    margin: 0 !important;
+    padding: 0 !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
@@ -744,7 +746,9 @@ select.form-control option {
   #receipt-print-box {
     box-shadow: none !important;
     border: none !important;
-    padding: 0 !important;
+    padding: 14mm 12mm !important;
+    margin: 0 auto !important;
+    width: 100% !important;
     max-width: 100% !important;
   }
 }
